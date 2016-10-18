@@ -6,17 +6,21 @@ var botUserToken = process.env.BOT_TOKEN,
     // put blizzard apid key here.  google blizzard api and you'll see how to obtain a key (free)
     XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
+client.on('ready', () => {
+	console.log("I am reborn!");
+});
+
 client.on('message', msg => {
 
 	let prefix = "!";
 
 	if (!msg.content.startsWith(prefix)) return;
 
-	if (msg.content.startsWith(prefix + "help")) {
-		msg.channel.sendMessage("I'm BlizzardAPI Bot!  Some things I can do are: \n \n \t !ilvl realm character - shows item level \n \n \t !achievements realm character - shows achievement points");
-	}
-
 	if (msg.content.startsWith(prefix)) {
+		if (msg.content === prefix + "help") {
+			msg.channel.sendMessage("I'm BlizzardAPI Bot!  Some things I can do are: \n \n \t !ilvl realm character - shows item level \n \n \t !achievements realm character - shows achievement points");
+			return;
+		}
 		var splitMsg = msg.content.split(" ");
 		var splitMsgL = splitMsg.length
 		var type = splitMsg[0];
@@ -27,7 +31,7 @@ client.on('message', msg => {
 			var realm = splitMsg[1];
 			var name = splitMsg[2];
 		}
-
+		
 		var ilvlApi = "https://us.api.battle.net/wow/character/"+realm+"/"+name+"?fields=items&locale=en_US&apikey="+blizzardAPIKey	
 		var xhr = new XMLHttpRequest();
 		xhr.open("GET", ilvlApi, true);
