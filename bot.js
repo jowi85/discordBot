@@ -5,7 +5,6 @@ var botUserToken = process.env.BOT_TOKEN,
     blizzardAPIKey = process.env.API_KEY,
     // put blizzard apid key here.  google blizzard api and you'll see how to obtain a key (free)
     XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest,
-    re = /.+\./gi;
 
 client.on('message', msg => {
 
@@ -14,28 +13,36 @@ client.on('message', msg => {
 	if (!msg.content.startsWith(prefix)) return;
 
 	if (msg.content.startsWith(prefix + "help")) {
-		msg.channel.sendMessage("I'm BlizzardAPI Bot!  Some things I can do are: \n \n \t !ilvl.toonName.realmName - shows item level \n \n \t !achievements.toonName.realmName - shows achievement points");
+		msg.channel.sendMessage("I'm BlizzardAPI Bot!  Some things I can do are: \n \n \t !ilvl realm character - shows item level \n \n \t !achievements realm character - shows achievement points");
 	}
 
-	if (msg.content.startsWith(prefix + "ilvl") || msg.content.startsWith(prefix + "achievements")) {
-		var msgName = msg.content.split(".")[1];
-		var msgRealm = msg.content.split(".")[2];
-		var ilvlApi = "https://us.api.battle.net/wow/character/"+msgRealm+"/"+msgName+"?fields=items&locale=en_US&apikey="+blizzardAPIKey
-		
+	if (msg.content.startsWith(prefix)) {
+		var splitMsg = msg.content.split(" ");
+		var splitMsgL = splitMsg.length
+		var type = splitMsg[0];
+		if (splitMsgL === 4) {
+			var realm = splitMsg[1] + " " + splitMsg[2];
+			var name = splitMsg[3];
+		} else if (splitMsgL === 3) {
+			var realm = splitMsg[1];
+			var name = splitMsg[2];
+		}
+
+		var ilvlApi = "https://us.api.battle.net/wow/character/"+realm+"/"+name+"?fields=items&locale=en_US&apikey="+blizzardAPIKey	
 		var xhr = new XMLHttpRequest();
 		xhr.open("GET", ilvlApi, true);
 		xhr.onload = function (e) {
 	  		if (xhr.readyState === 4) {
 	  			var apiRes = JSON.parse(xhr.responseText);
 	    		if (xhr.status === 200) {
-	    			if (msg.content.startsWith(prefix + "ilvl")) {
+	    			if (type === prefix + "ilvl") {
 	    				var avgIlvl = apiRes.items.averageItemLevel;
 	    				var avgIlvlE = apiRes.items.averageItemLevelEquipped;
-	    				msg.channel.sendMessage(msgName+' - '+msgRealm+': '+avgIlvl+' ('+avgIlvlE+' equipped)');
+	    				msg.channel.sendMessage(name+' - '+realm+': '+avgIlvl+' ('+avgIlvlE+' equipped)');
 	    			}
-	    			if (msg.content.startsWith(prefix + "achievements")) {
+	    			if (type === prefix + "achievements") {
 	    				var achievePt = apiRes.achievementPoints;
-	    				msg.channel.sendMessage(msgName+' - '+msgRealm+': '+achievePt+' points total');
+	    				msg.channel.sendMessage(name+' - '+realm+': '+achievePt+' points total');
 	    			}
 	    		} else {
 	      			console.error(apiRes.reason);
