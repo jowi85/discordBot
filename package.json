@@ -1,0 +1,14 @@
+{
+  "name": "wowDiscordBot",
+  "version": "0.0.1",
+  "description": "Uses discord.js to return WoW APIs to discord channels",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "discord.js": "latest",
+    "xmlhttprequest": "latest"
+
+  }
+}

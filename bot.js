@@ -1,11 +1,11 @@
 var Discord = require('discord.js');
 var client = new Discord.Client();
-var botUserToken = "";
-// creaet a bot and put its user token here -- can find this on discord.app (website, not client) under developers
-var blizzardAPIKey = ""
-// put blizzard apid key here.  google blizzard api and you'll see how to obtain a key (free)
-var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
-var re = /.+\./gi;
+var botUserToken = process.env.BOT_TOKEN,
+    // create a bot and put its user token here -- can find this on discord.app (website, not client) under developers
+    blizzardAPIKey = process.env.API_KEY,
+    // put blizzard apid key here.  google blizzard api and you'll see how to obtain a key (free)
+    XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest,
+    re = /.+\./gi;
 
 client.on('message', msg => {
 
