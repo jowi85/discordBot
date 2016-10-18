@@ -4,7 +4,7 @@ var botUserToken = process.env.BOT_TOKEN,
     // create a bot and put its user token here -- can find this on discord.app (website, not client) under developers
     blizzardAPIKey = process.env.API_KEY,
     // put blizzard apid key here.  google blizzard api and you'll see how to obtain a key (free)
-    XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest,
+    XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 client.on('message', msg => {
 
