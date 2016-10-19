@@ -18,7 +18,7 @@ client.on('message', msg => {
 
 	if (msg.content.startsWith(prefix)) {
 		if (msg.content === prefix + "help") {
-			msg.channel.sendMessage("I'm BlizzardAPI Bot!  Some things I can do are: \n \n \t !ilvl realm character - shows item level \n \n \t !achievements realm character - shows achievement points \n \n \t !legendary realm character - reveals if you have a legendary equipped");
+			msg.channel.sendMessage("I'm BlizzardAPI Bot!  Some things I can do are: \n \n \t !ilvl realm character - shows item level \n \n \t !achievements realm character - shows achievement points \n \n \t !legendary realm character - shows any equipped legendary and effect");
 			return;
 		}
 		var splitMsg = msg.content.split(" ");
@@ -49,13 +49,34 @@ client.on('message', msg => {
 	    				msg.channel.sendMessage(name+' - '+realm+': '+achievePt+' points total');
 	    			}
 	    			if (type === prefix + "legendary") {
-
-	    				var hasLegendary = false;
+	    				hasLegendary = false;
 	    				for (let i = 2; i < Object.keys(apiRes.items).length; i++) {
 	    					var child = Object.keys(apiRes.items)[i];
 	    					if (apiRes.items[child].quality === 5) {
 	    						msg.channel.sendMessage(apiRes.items[child].name + " (" + child + ")");
-	    						hasLegendary = true;
+	    						var id = apiRes.items[child].id;
+	    						console.log(id);
+	    						var hasLegendary = true;
+	    						var itemApi = "https://us.api.battle.net/wow/item/"+id+"?locale=en_US&apikey="+blizzardAPIKey
+	    						var xhr2 = new XMLHttpRequest();
+	    						xhr2.open("GET", itemApi, true);
+	    						xhr2.onload = function (e) {
+	    							if (xhr2.readyState === 4) {
+	    								var apiRes2 = JSON.parse(xhr2.responseText);
+	    								if(xhr2.status === 200) {
+	    									console.log(apiRes2.itemSpells[0].spell.description);
+	    									msg.channel.sendMessage(apiRes2.itemSpells[0].spell.description);
+	    								} else {
+	      									console.error(apiRes2.reason);
+	      									msg.channel.sendMessage(apiRes2.reason);
+	    								}  
+	    								
+	    							}
+	    						}
+	    						xhr2.onerror = function (e) {
+  								console.error(xhr.statusText);
+								};
+								xhr2.send(null);
 	    					}	    					
 	    				}
 	    				if (hasLegendary === false) {
@@ -68,6 +89,7 @@ client.on('message', msg => {
 	      			msg.channel.sendMessage(apiRes.reason);
 	    		}
 	  		}
+	  		console.log(hasLegendary);
 		};
 		xhr.onerror = function (e) {
   			console.error(xhr.statusText);
