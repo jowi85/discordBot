@@ -74,7 +74,7 @@ client.on('message', msg => {
 	    							}
 	    						}
 	    						xhr2.onerror = function (e) {
-  								console.error(xhr.statusText);
+  								console.error(xhr2.statusText);
 								};
 								xhr2.send(null);
 	    					}	    					
