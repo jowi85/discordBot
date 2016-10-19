@@ -18,7 +18,7 @@ client.on('message', msg => {
 
 	if (msg.content.startsWith(prefix)) {
 		if (msg.content === prefix + "help") {
-			msg.channel.sendMessage("I'm BlizzardAPI Bot!  Some things I can do are: \n \n \t !ilvl realm character - shows item level \n \n \t !achievements realm character - shows achievement points");
+			msg.channel.sendMessage("I'm BlizzardAPI Bot!  Some things I can do are: \n \n \t !ilvl realm character - shows item level \n \n \t !achievements realm character - shows achievement points \n \n \t !legendary realm character - reveals if you have a legendary equipped");
 			return;
 		}
 		var splitMsg = msg.content.split(" ");
@@ -32,7 +32,7 @@ client.on('message', msg => {
 			var name = splitMsg[2];
 		}
 		
-		var ilvlApi = "https://us.api.battle.net/wow/character/"+realm+"/"+name+"?fields=items&locale=en_US&apikey="+blizzardAPIKey	
+		var ilvlApi = "https://us.api.battle.net/wow/character/"+realm+"/"+name+"?fields=items&locale=en_US&apikey="+blizzardAPIKey
 		var xhr = new XMLHttpRequest();
 		xhr.open("GET", ilvlApi, true);
 		xhr.onload = function (e) {
@@ -47,6 +47,21 @@ client.on('message', msg => {
 	    			if (type === prefix + "achievements") {
 	    				var achievePt = apiRes.achievementPoints;
 	    				msg.channel.sendMessage(name+' - '+realm+': '+achievePt+' points total');
+	    			}
+	    			if (type === prefix + "legendary") {
+
+	    				var hasLegendary = false;
+	    				for (let i = 2; i < Object.keys(apiRes.items).length; i++) {
+	    					var child = Object.keys(apiRes.items)[i];
+	    					if (apiRes.items[child].quality === 5) {
+	    						msg.channel.sendMessage(apiRes.items[child].name + " (" + child + ")");
+	    						hasLegendary = true;
+	    					}	    					
+	    				}
+	    				if (hasLegendary === false) {
+	    					msg.channel.sendMessage("No legendaries :(");
+	    				}
+	    				return;
 	    			}
 	    		} else {
 	      			console.error(apiRes.reason);
