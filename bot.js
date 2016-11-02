@@ -14,7 +14,7 @@ client.on('ready', () => {
 
 client.on('message', msg => {
 
-	let prefix = "??";
+	let prefix = "!";
 
 	if (!msg.content.startsWith(prefix)) return;
 
