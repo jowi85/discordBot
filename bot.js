@@ -14,7 +14,7 @@ client.on('ready', () => {
 
 client.on('message', msg => {
 
-	let prefix = "!";
+	let prefix = "??";
 
 	if (!msg.content.startsWith(prefix)) return;
 
@@ -23,7 +23,7 @@ client.on('message', msg => {
 		return;
 	}
 
-	if ((msg.content.startsWith(prefix + "ilvl")) || (msg.content.startsWith(prefix + "achievements")) || (msg.content.startsWith(prefix + "legendary"))) {
+	if ((msg.content.startsWith(prefix + "ilvl")) || (msg.content.startsWith(prefix + "achievements")) || (msg.content.startsWith(prefix + "legendary")) || (msg.content.startsWith(prefix + "yradnegel"))) {
 		//parse message and fill in endpoint url
 		var params = splitMessage(msg.content);
 		var ilvlApiFill = apiFill(ilvlApi, params[0], params[1], '');
@@ -46,8 +46,52 @@ client.on('message', msg => {
 					if (msg.content.startsWith(prefix + "achievements")) {
 						msg.channel.sendMessage(params[1]+' - '+params[0]+': '+achievePt+' points total');
 					}
-					if (msg.content.startsWith(prefix + "legendary")) {
+					if (msg.content.startsWith(prefix + "legendary") && params[1].toLowerCase() !== "chimley") {
 						//set hasLegendary to false.  will only change to true if for loop finds a quality 5.  otherwise no second api call is made
+						var hasLegendary = false;
+						//parse through all items listed in ilvl api.  if any of the equipped items has status 5 (legendary), store the itemId of the legendary,
+						//make second call to item api, and retrieve description of what the legendary property is for that itemId.
+						for (let i = 2; i < Object.keys(ilvlApiFillRes.items).length; i++) {
+							var armorType = Object.keys(ilvlApiFillRes.items)[i];
+							//if there is a legendary, store itemId to use below.
+							if (ilvlApiFillRes.items[armorType].quality === 5) {
+								msg.channel.sendMessage(ilvlApiFillRes.items[armorType].name + " (" + armorType + ")");
+								var itemId = ilvlApiFillRes.items[armorType].id;
+								//sets hasLegendary to true bot doesn't return 'No Legendary :(' message.
+								hasLegendary = true;
+								//makes second call to item api with stored itemId.
+								var itemApiFill = apiFill(itemApi, '', '', itemId);
+								var xhr2 = new XMLHttpRequest();
+								xhr2.open("GET", itemApiFill, true);
+								xhr2.onload = function (e) {
+									if (xhr2.readyState === 4) {
+	    								var itemApiFillRes = JSON.parse(xhr2.responseText);
+	    								if(xhr2.status === 200) {
+	    									msg.channel.sendMessage(itemApiFillRes.itemSpells[0].spell.description);
+	    								} else {
+	      									msg.channel.sendMessage(itemApiFillRes.reason);
+	    								}  
+	    							}
+								}
+								xhr2.onerror = function (e) {
+  									console.error(xhr2.statusText);
+								};
+								xhr2.send(null);
+							}
+	    				}
+	    				//if the for loop didn't find any item with quality 5, skip the second call and return 'No Legendary :('.
+	    				if (hasLegendary === false) {
+	    					msg.channel.sendMessage("No legendaries :(");
+						}
+						return;
+					}
+					if (msg.content.startsWith(prefix + "legendary") && params[1].toLowerCase() === "chimley") {
+						//set hasLegendary to false.  will only change to true if for loop finds a quality 5.  otherwise no second api call is made
+						msg.channel.sendMessage("Chimley? No, I don't want to. \n \n \n \n I'll only do it if you can retype the command and spell 'legendary' backwards...muhahaha");
+					}
+					if (msg.content.startsWith(prefix + "yradnegel") && params[1].toLowerCase() === "chimley") {
+						//set hasLegendary to false.  will only change to true if for loop finds a quality 5.  otherwise no second api call is made
+						msg.channel.sendMessage("As you wish...");
 						var hasLegendary = false;
 						//parse through all items listed in ilvl api.  if any of the equipped items has status 5 (legendary), store the itemId of the legendary,
 						//make second call to item api, and retrieve description of what the legendary property is for that itemId.
