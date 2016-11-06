@@ -23,123 +23,119 @@ client.on('message', msg => {
 		return;
 	}
 
-	if ((msg.content.startsWith(prefix + "ilvl")) || (msg.content.startsWith(prefix + "achievements")) || (msg.content.startsWith(prefix + "legendary")) || (msg.content.startsWith(prefix + "yradnegel"))) {
-		//parse message and fill in endpoint url
+	if ((msg.content.startsWith(prefix + "ilvl")) || (msg.content.startsWith(prefix + "achievements")) || (msg.content.startsWith(prefix + "legendary"))) {
 		var params = splitMessage(msg.content);
 		var ilvlApiFill = apiFill(ilvlApi, params[0], params[1], '');
-		//make a request to ilvl api
 		var xhr = new XMLHttpRequest();
 		xhr.open("GET", ilvlApiFill, true);
 		xhr.onload = function (e) {
-			//if endpoint is called successfully and response has 200 status
+
 			if (xhr.readyState === 4) {
 				var ilvlApiFillRes = JSON.parse(xhr.responseText);
+
 				if (xhr.status === 200) {
 					var avgIlvl = ilvlApiFillRes.items.averageItemLevel;
 					var avgIlvlE = ilvlApiFillRes.items.averageItemLevelEquipped;
 					var achievePt = ilvlApiFillRes.achievementPoints;
-					//return ilvl
+					var arr = new Array();
+					var arr2 = new Array();
+					for (let i = 2; i < Object.keys(ilvlApiFillRes.items).length; i++) {
+						var armorType = Object.keys(ilvlApiFillRes.items)[i];
+						if (ilvlApiFillRes.items[armorType].quality === 5) {
+							arr[i] = ilvlApiFillRes.items[armorType].name
+							arr2[i] = ilvlApiFillRes.items[armorType].id;
+						}
+					}
+
+					legendaryNames = arr.filter(function(e){return e});
+					legendaryIds = arr2.filter(function(e){return e}); 
+					
 					if (msg.content.startsWith(prefix + "ilvl")) {
 						msg.channel.sendMessage(params[1]+' - '+params[0]+': '+avgIlvl+' ('+avgIlvlE+' equipped)');
 					}
-					//return achievement points
+					
 					if (msg.content.startsWith(prefix + "achievements")) {
 						msg.channel.sendMessage(params[1]+' - '+params[0]+': '+achievePt+' points total');
 					}
-					if (msg.content.startsWith(prefix + "legendary") && params[1].toLowerCase() !== "chimley") {
-						//set hasLegendary to false.  will only change to true if for loop finds a quality 5.  otherwise no second api call is made
-						var hasLegendary = false;
-						//parse through all items listed in ilvl api.  if any of the equipped items has status 5 (legendary), store the itemId of the legendary,
-						//make second call to item api, and retrieve description of what the legendary property is for that itemId.
-						for (let i = 2; i < Object.keys(ilvlApiFillRes.items).length; i++) {
-							var armorType = Object.keys(ilvlApiFillRes.items)[i];
-							//if there is a legendary, store itemId to use below.
-							if (ilvlApiFillRes.items[armorType].quality === 5) {
-								msg.channel.sendMessage(ilvlApiFillRes.items[armorType].name + " (" + armorType + ")");
-								var itemId = ilvlApiFillRes.items[armorType].id;
-								//sets hasLegendary to true bot doesn't return 'No Legendary :(' message.
-								hasLegendary = true;
-								//makes second call to item api with stored itemId.
-								var itemApiFill = apiFill(itemApi, '', '', itemId);
-								var xhr2 = new XMLHttpRequest();
-								xhr2.open("GET", itemApiFill, true);
-								xhr2.onload = function (e) {
-									if (xhr2.readyState === 4) {
-	    								var itemApiFillRes = JSON.parse(xhr2.responseText);
-	    								if(xhr2.status === 200) {
-	    									msg.channel.sendMessage(itemApiFillRes.itemSpells[0].spell.description);
-	    								} else {
-	      									msg.channel.sendMessage(itemApiFillRes.reason);
-	    								}  
-	    							}
-								}
-								xhr2.onerror = function (e) {
-  									console.error(xhr2.statusText);
-								};
-								xhr2.send(null);
+
+					if (msg.content.startsWith(prefix + "legendary") && legendaryNames.length === 1) {
+						var itemApiFill = apiFill(itemApi, '', '', legendaryIds[0]);
+						var xhr2 = new XMLHttpRequest();
+						xhr2.open("GET", itemApiFill, true);
+						xhr2.onload = function (e) {
+							if (xhr2.readyState === 4) {
+								var itemApiFillRes = JSON.parse(xhr2.responseText);
+								if(xhr2.status === 200) {
+									msg.channel.sendMessage(legendaryNames[0]);
+									msg.channel.sendMessage(itemApiFillRes.itemSpells[0].spell.description);
+								} else {
+  									msg.channel.sendMessage(itemApiFillRes.reason);
+								}  
 							}
-	    				}
-	    				//if the for loop didn't find any item with quality 5, skip the second call and return 'No Legendary :('.
-	    				if (hasLegendary === false) {
-	    					msg.channel.sendMessage("No legendaries :(");
 						}
-						return;
-					}
-					if (msg.content.startsWith(prefix + "legendary") && params[1].toLowerCase() === "chimley") {
-						//set hasLegendary to false.  will only change to true if for loop finds a quality 5.  otherwise no second api call is made
-						msg.channel.sendMessage("Chimley? No, I don't want to. \n \n \n \n I'll only do it if you can retype the command and spell 'legendary' backwards...muhahaha");
-					}
-					if (msg.content.startsWith(prefix + "yradnegel") && params[1].toLowerCase() === "chimley") {
-						//set hasLegendary to false.  will only change to true if for loop finds a quality 5.  otherwise no second api call is made
-						msg.channel.sendMessage("As you wish...");
-						var hasLegendary = false;
-						//parse through all items listed in ilvl api.  if any of the equipped items has status 5 (legendary), store the itemId of the legendary,
-						//make second call to item api, and retrieve description of what the legendary property is for that itemId.
-						for (let i = 2; i < Object.keys(ilvlApiFillRes.items).length; i++) {
-							var armorType = Object.keys(ilvlApiFillRes.items)[i];
-							//if there is a legendary, store itemId to use below.
-							if (ilvlApiFillRes.items[armorType].quality === 5) {
-								msg.channel.sendMessage(ilvlApiFillRes.items[armorType].name + " (" + armorType + ")");
-								var itemId = ilvlApiFillRes.items[armorType].id;
-								//sets hasLegendary to true bot doesn't return 'No Legendary :(' message.
-								hasLegendary = true;
-								//makes second call to item api with stored itemId.
-								var itemApiFill = apiFill(itemApi, '', '', itemId);
-								var xhr2 = new XMLHttpRequest();
-								xhr2.open("GET", itemApiFill, true);
-								xhr2.onload = function (e) {
-									if (xhr2.readyState === 4) {
-	    								var itemApiFillRes = JSON.parse(xhr2.responseText);
-	    								if(xhr2.status === 200) {
-	    									msg.channel.sendMessage(itemApiFillRes.itemSpells[0].spell.description);
-	    								} else {
-	      									msg.channel.sendMessage(itemApiFillRes.reason);
-	    								}  
-	    							}
-								}
-								xhr2.onerror = function (e) {
-  									console.error(xhr2.statusText);
-								};
-								xhr2.send(null);
+						xhr2.onerror = function (e) {
+							console.error(xhr2.statusText);
+						};
+						xhr2.send(null);
+
+    				} else if (msg.content.startsWith(prefix + "legendary") && legendaryNames.length === 2) {
+    					var itemApiFillOne = apiFill(itemApi, '', '', legendaryIds[0]);
+						var xhr2 = new XMLHttpRequest();
+						xhr2.open("GET", itemApiFillOne, true);
+						xhr2.onload = function (e) {
+							if (xhr2.readyState === 4) {
+								var itemApiFillOneRes = JSON.parse(xhr2.responseText);
+								if(xhr2.status === 200) {
+									msg.channel.sendMessage(legendaryNames[0]);
+									msg.channel.sendMessage(itemApiFillOneRes.itemSpells[0].spell.description);
+								} else {
+  									msg.channel.sendMessage(itemApiFillOneRes.reason);
+								}  
 							}
-	    				}
-	    				//if the for loop didn't find any item with quality 5, skip the second call and return 'No Legendary :('.
-	    				if (hasLegendary === false) {
-	    					msg.channel.sendMessage("No legendaries :(");
 						}
-						return;
-					}
-				} else {
-	      			console.error(ilvlApiFillRes.reason);
-	      			msg.channel.sendMessage(ilvlApiFillRes.reason);
+						xhr2.onerror = function (e) {
+							console.error(xhr2.statusText);
+						};
+						xhr2.send(null);
+
+						var itemApiFillTwo = apiFill(itemApi, '', '', legendaryIds[1]);
+						var xhr3 = new XMLHttpRequest();
+						xhr3.open("GET", itemApiFillTwo, true);
+						xhr3.onload = function (e) {
+							if (xhr3.readyState === 4) {
+								var itemApiFillTwoRes = JSON.parse(xhr3.responseText);
+								if(xhr3.status === 200) {
+									msg.channel.sendMessage(legendaryNames[1]);
+									msg.channel.sendMessage(itemApiFillTwoRes.itemSpells[0].spell.description);
+								} else {
+  									msg.channel.sendMessage(itemApiFillTwoRes.reason);
+								}  
+							}
+						}
+						xhr3.onerror = function (e) {
+							console.error(xhr3.statusText);
+						};
+						xhr3.send(null);
+					
+    				} else if (msg.content.startsWith(prefix + "legendary") && legendaryNames.length === 0) {
+    					msg.channel.sendMessage("No legendaries :(");
+    				}
+
 				}
+
+			} else {
+      			console.error(ilvlApiFillRes.reason);
+      			msg.channel.sendMessage(ilvlApiFillRes.reason);
 			}
 		}
+
 		xhr.onerror = function (e) {
 			console.error(xhr.statusText);
 		}
+
 		xhr.send(null);
 	}
+
 });
 
 function splitMessage (message) {
@@ -149,22 +145,28 @@ function splitMessage (message) {
 		var realm = splitMsg[1] + " " + splitMsg[2];
 		var character = splitMsg[3];
 		var splitMessageR = [realm, character];
+
 	} else if (splitMsgL === 3) {
 		var realm = splitMsg[1];
 		var character = splitMsg[2];
 		var splitMessageR = [realm, character];
 	}
+
 	return splitMessageR;
+
 }
 
 function apiFill (endpoint, realm, character, id) {
 	if (realm === '' && character === '') {
 		var api = endpoint.replace("{id}", id);
 		return api;
+
 	} else if (id === '') {
 		var api = endpoint.replace("{realm}", realm).replace("{character}", character);
 		return api;
+
 	}
+
 }
 
 client.login(botUserToken);
