@@ -39,16 +39,19 @@ client.on('message', msg => {
 					var achievePt = ilvlApiFillRes.achievementPoints;
 					var arr = new Array();
 					var arr2 = new Array();
+					var arr3 = new Array();
 					for (let i = 2; i < Object.keys(ilvlApiFillRes.items).length; i++) {
 						var armorType = Object.keys(ilvlApiFillRes.items)[i];
 						if (ilvlApiFillRes.items[armorType].quality === 5) {
 							arr[i] = ilvlApiFillRes.items[armorType].name
 							arr2[i] = ilvlApiFillRes.items[armorType].id;
+							arr3[i] = armorType;
 						}
 					}
 
 					legendaryNames = arr.filter(function(e){return e});
 					legendaryIds = arr2.filter(function(e){return e}); 
+					legendarySlot = arr3.filter(function(e){return e});
 					
 					if (msg.content.startsWith(prefix + "ilvl")) {
 						msg.channel.sendMessage(params[1]+' - '+params[0]+': '+avgIlvl+' ('+avgIlvlE+' equipped)');
@@ -66,8 +69,7 @@ client.on('message', msg => {
 							if (xhr2.readyState === 4) {
 								var itemApiFillRes = JSON.parse(xhr2.responseText);
 								if(xhr2.status === 200) {
-									msg.channel.sendMessage(legendaryNames[0]);
-									msg.channel.sendMessage(itemApiFillRes.itemSpells[0].spell.description);
+									msg.channel.sendMessage(legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillRes.itemSpells[0].spell.description);
 								} else {
   									msg.channel.sendMessage(itemApiFillRes.reason);
 								}  
@@ -86,8 +88,7 @@ client.on('message', msg => {
 							if (xhr2.readyState === 4) {
 								var itemApiFillOneRes = JSON.parse(xhr2.responseText);
 								if(xhr2.status === 200) {
-									msg.channel.sendMessage(legendaryNames[0]);
-									msg.channel.sendMessage(itemApiFillOneRes.itemSpells[0].spell.description);
+									msg.channel.sendMessage(legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillOneRes.itemSpells[0].spell.description);
 								} else {
   									msg.channel.sendMessage(itemApiFillOneRes.reason);
 								}  
@@ -105,8 +106,7 @@ client.on('message', msg => {
 							if (xhr3.readyState === 4) {
 								var itemApiFillTwoRes = JSON.parse(xhr3.responseText);
 								if(xhr3.status === 200) {
-									msg.channel.sendMessage(legendaryNames[1]);
-									msg.channel.sendMessage(itemApiFillTwoRes.itemSpells[0].spell.description);
+									msg.channel.sendMessage(legendaryNames[1] + " (" + legendarySlot[1] + ") - " + itemApiFillTwoRes.itemSpells[0].spell.description);
 								} else {
   									msg.channel.sendMessage(itemApiFillTwoRes.reason);
 								}  
