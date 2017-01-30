@@ -69,10 +69,10 @@ client.on('message', msg => {
     if (!msg.content.startsWith(prefix)) return;
 
     if (msg.content === prefix + "help") {
-        msg.channel.sendMessage("I'm BlizzardAPI Bot!  Try /tellme {realm} {character} to get information!");
+        msg.channel.sendMessage("I'm BlizzardAPI Bot!  Try " + prefix + "tellme {realm} {character} to get information!");
         return;
     }
-    
+
     if (msg.content.startsWith(prefix + "tellme")) {
         var params = splitMessage(msg.content);
         var ilvlApiFill = apiFill(ilvlApi, params[0], params[1], '');
@@ -133,6 +133,23 @@ client.on('message', msg => {
                                                             ' **Mastery**: ' + statsApiFillRes.stats.mastery.toFixed(2) +'%' +
                                                             ' **Vers**: ' + statsApiFillRes.stats.versatilityDamageDoneBonus.toFixed(2) +'%'
                                                             );
+                                    var xhr3 = new XMLHttpRequest();
+                                    var itemApiFill = apiFill(itemApi, '', '', legendaryIds[0]);
+                                    xhr3.open("GET", itemApiFill, true);
+                                    xhr3.onload = function (e) {
+                                        if (xhr3.readyState === 4) {
+                                            var itemApiFillRes = JSON.parse(xhr3.responseText);
+                                            if(xhr3.status === 200) {
+                                                msg.channel.sendMessage('*** Legendaries ***\n' + legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillRes.itemSpells[0].spell.description);
+                                            } else {
+                                                msg.channel.sendMessage(itemApiFillRes.reason);
+                                            }  
+                                        }
+                                    }
+                                    xhr3.onerror = function (e) {
+                                        console.error(xhr3.statusText);
+                                    };
+                                    xhr3.send(null);
                                 } else {
                                     console.error(statsApiFillRes.reason);
                                     msg.channel.sendMessage(statsApiFillRes.reason);
@@ -144,23 +161,7 @@ client.on('message', msg => {
                         }
                         xhr2.send(null);
 
-                        var xhr3 = new XMLHttpRequest();
-                        var itemApiFill = apiFill(itemApi, '', '', legendaryIds[0]);
-                        xhr3.open("GET", itemApiFill, true);
-                        xhr3.onload = function (e) {
-                            if (xhr3.readyState === 4) {
-                                var itemApiFillRes = JSON.parse(xhr3.responseText);
-                                if(xhr3.status === 200) {
-                                    msg.channel.sendMessage('*** Legendaries ***\n' + legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillRes.itemSpells[0].spell.description);
-                                } else {
-                                    msg.channel.sendMessage(itemApiFillRes.reason);
-                                }  
-                            }
-                        }
-                        xhr3.onerror = function (e) {
-                            console.error(xhr3.statusText);
-                        };
-                        xhr3.send(null);
+                        
 
                     } else if (legendaryNames.length === 2) {
                         var xhr2 = new XMLHttpRequest();
@@ -226,10 +227,6 @@ client.on('message', msg => {
                             console.error(xhr2.statusText);
                         }
                         xhr2.send(null);
-
-                        
-
-                        
                     
                     } else if (legendaryNames.length === 0) {
                         msg.channel.sendMessage("No legendaries :(");
