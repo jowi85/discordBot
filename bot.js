@@ -132,6 +132,7 @@ client.on('message', msg => {
                                                             ' **Haste**: ' + statsApiFillRes.stats.haste.toFixed(2) +'%' +
                                                             ' **Mastery**: ' + statsApiFillRes.stats.mastery.toFixed(2) +'%' +
                                                             ' **Vers**: ' + statsApiFillRes.stats.versatilityDamageDoneBonus.toFixed(2) +'%'
+                                                            '*** Legendaries ***'
                                                             );
                                     var xhr3 = new XMLHttpRequest();
                                     var itemApiFill = apiFill(itemApi, '', '', legendaryIds[0]);
@@ -140,7 +141,7 @@ client.on('message', msg => {
                                         if (xhr3.readyState === 4) {
                                             var itemApiFillRes = JSON.parse(xhr3.responseText);
                                             if(xhr3.status === 200) {
-                                                msg.channel.sendMessage('*** Legendaries ***\n' + legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillRes.itemSpells[0].spell.description);
+                                                msg.channel.sendMessage(legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillRes.itemSpells[0].spell.description);
                                             } else {
                                                 msg.channel.sendMessage(itemApiFillRes.reason);
                                             }  
@@ -176,6 +177,7 @@ client.on('message', msg => {
                                                             ' **Haste**: ' + statsApiFillRes.stats.haste.toFixed(2) +'%' +
                                                             ' **Mastery**: ' + statsApiFillRes.stats.mastery.toFixed(2) +'%' +
                                                             ' **Vers**: ' + statsApiFillRes.stats.versatilityDamageDoneBonus.toFixed(2) +'%'
+                                                            '*** Legendaries ***'
                                                             );
 
                                         var xhr3 = new XMLHttpRequest();
@@ -187,8 +189,7 @@ client.on('message', msg => {
                                                 var itemApiFillOneRes = JSON.parse(xhr3.responseText);
                                                 if(xhr3.status === 200) {
                                                     console.log(legendarySlot[0]);
-                
-                                                    msg.channel.sendMessage('*** Legendaries ***\n' + legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillOneRes.itemSpells[0].spell.description);
+                                                    msg.channel.sendMessage(legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillOneRes.itemSpells[0].spell.description);
                                                 } else {
                                                     msg.channel.sendMessage(itemApiFillOneRes.reason);
                                                 }  
