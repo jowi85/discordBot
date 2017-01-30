@@ -131,7 +131,7 @@ client.on('message', msg => {
                                     msg.channel.sendMessage('**Crit**: ' + statsApiFillRes.stats.crit.toFixed(2) + '%' + 
                                                             ' **Haste**: ' + statsApiFillRes.stats.haste.toFixed(2) +'%' +
                                                             ' **Mastery**: ' + statsApiFillRes.stats.mastery.toFixed(2) +'%' +
-                                                            ' **Vers**: ' + statsApiFillRes.stats.versatilityDamageDoneBonus.toFixed(2) +'%' +
+                                                            ' **Vers**: ' + statsApiFillRes.stats.versatilityDamageDoneBonus.toFixed(2) +'%\n' +
                                                             '*** Legendaries ***'
                                                             );
                                     var xhr3 = new XMLHttpRequest();
@@ -176,7 +176,7 @@ client.on('message', msg => {
                                     msg.channel.sendMessage('**Crit**: ' + statsApiFillRes.stats.crit.toFixed(2) + '%' + 
                                                             ' **Haste**: ' + statsApiFillRes.stats.haste.toFixed(2) +'%' +
                                                             ' **Mastery**: ' + statsApiFillRes.stats.mastery.toFixed(2) +'%' +
-                                                            ' **Vers**: ' + statsApiFillRes.stats.versatilityDamageDoneBonus.toFixed(2) +'%' +
+                                                            ' **Vers**: ' + statsApiFillRes.stats.versatilityDamageDoneBonus.toFixed(2) +'%\n' +
                                                             '*** Legendaries ***'
                                                             );
 
