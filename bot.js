@@ -1,284 +1,135 @@
-var Discord = require('discord.js');
-var client = new Discord.Client();
-var botUserToken = process.env.BOT_TOKEN;
-// create a bot and put its user token here -- can find this on discord.app (website, not client) under developers
-var blizzardAPIKey = process.env.API_KEY;
-// put blizzard apid key here.  google blizzard api and you'll see how to obtain a key (free)
-var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
-var ilvlApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=items&locale=en_US&apikey="+blizzardAPIKey;
-var itemApi = "https://us.api.battle.net/wow/item/{id}?locale=en_US&apikey="+blizzardAPIKey;
-var statsApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=stats&locale=en_US&apikey="+blizzardAPIKey;
-var classNames = ["Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Death Knight", "Shaman", "Mage", "Warlock", "Monk", "Druid", "Demon Hunter"];
-var specNames = {//warrior
-                 'Scaleshard': 'Protection', 
-                 'Strom\'kar, the Warbreaker': 'Arms',
-                 'Warswords of the Valarjar': 'Fury',
-                 //paladin
-                 'Oathseeker': 'Protection',
-                 'Ashbringer': 'Retribution',
-                 'The Silver Hand': 'Holy',
-                 //hunter
-                 'Thas\'dorah, Legacy of the Windrunners': 'Marksmanship',
-                 'Talonclaw': 'Survival',
-                 'Titanstrike': 'Beast Mastery',
-                 //rogue
-                 'The Kingslayers': 'Assassination',
-                 'The Dreadblades': 'Outlaw',
-                 'Fangs of the Devourer': 'Subtelty',
-                 //priest
-                 'T\'uure, Beacon of the Naaru': 'Holy',
-                 'Light\'s Wrath': 'Discipline',
-                 'Xal\'atath, Blade of the Black Empire': 'Shadow',
-                 //death knight
-                 'Maw of the Damned': 'Blood',
-                 'Frostreaper': 'Frost',
-                 'Apocalypse': 'Unholy',
-                 //shaman
-                 'The Fist of Ra-den': 'Elemental',
-                 'Doomhammer': 'Enhancement',
-                 'Sharas\'dal, Scepter of Tides': 'Restoration',
-                 //mage
-                 'Aluneth': 'Arcane',
-                 'Felo\'melorn': 'Fire',
-                 'Ebonchill': 'Frost',
-                 //warlock
-                 'Spine of Thal\'kiel': 'Demonology',
-                 'Scepter of Sargeras': 'Destruction',
-                 'Ulthalesh, the Deadwind Harvester': 'Affliction',
-                 //monk
-                 'Sheilun, Staff of the Mists': 'Mistweaver',
-                 'Fists of the Heavens': 'Windwalker',
-                 'Fu Zan, the Wanderer\'s Companion': 'Brewmaster',
-                 //druid
-                 'Fangs of Ashmane': 'Feral',
-                 'Claws of Ursoc': 'Guardian',
-                 'G\'Hanir, the Mother Tree': 'Restoration',
-                 'Scythe of Elune': 'Balance',
-                 //demon hunter
-                 'Twinblades of the Deceiver': 'Havoc',
-                 'Aldrachi Warblades': 'Vengeance'};
+const Discord = require("discord.js");
+const client = new Discord.Client();
+const request = require("request");
+
+const botUserToken = process.env.BOT_TOKEN;
+const blizzardAPIKey = process.env.API_KEY;
+
+const ilvlApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=items&locale=en_US&apikey="+blizzardAPIKey;
+const itemApi = "https://us.api.battle.net/wow/item/{id}?locale=en_US&apikey="+blizzardAPIKey;
+const statsApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=stats&locale=en_US&apikey="+blizzardAPIKey;
+
+const classNames = ["Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Death Knight", "Shaman", "Mage", "Warlock", "Monk", "Druid", "Demon Hunter"];
+const specNames = {
+        //warrior
+        'Scaleshard': 'Protection', 'Strom\'kar, the Warbreaker': 'Arms', 'Warswords of the Valarjar': 'Fury',
+        //paladin
+        'Oathseeker': 'Protection', 'Ashbringer': 'Retribution', 'The Silver Hand': 'Holy',
+        //hunter
+        'Thas\'dorah, Legacy of the Windrunners': 'Marksmanship', 'Talonclaw': 'Survival', 'Titanstrike': 'Beast Mastery',
+        //rogue
+        'The Kingslayers': 'Assassination', 'The Dreadblades': 'Outlaw', 'Fangs of the Devourer': 'Subtelty',
+        //priest
+        'T\'uure, Beacon of the Naaru': 'Holy', 'Light\'s Wrath': 'Discipline', 'Xal\'atath, Blade of the Black Empire': 'Shadow',
+        //death knight
+        'Maw of the Damned': 'Blood', 'Frostreaper': 'Frost', 'Apocalypse': 'Unholy',
+        //shaman
+        'The Fist of Ra-den': 'Elemental', 'Doomhammer': 'Enhancement', 'Sharas\'dal, Scepter of Tides': 'Restoration',
+        //mage
+        'Aluneth': 'Arcane', 'Felo\'melorn': 'Fire', 'Ebonchill': 'Frost',
+        //warlock
+        'Spine of Thal\'kiel': 'Demonology', 'Scepter of Sargeras': 'Destruction', 'Ulthalesh, the Deadwind Harvester': 'Affliction',
+        //monk
+        'Sheilun, Staff of the Mists': 'Mistweaver', 'Fists of the Heavens': 'Windwalker', 'Fu Zan, the Wanderer\'s Companion': 'Brewmaster',
+        //druid
+        'Fangs of Ashmane': 'Feral', 'Claws of Ursoc': 'Guardian', 'G\'Hanir, the Mother Tree': 'Restoration', 'Scythe of Elune': 'Balance',
+        //demon hunter
+        'Twinblades of the Deceiver': 'Havoc', 'Aldrachi Warblades': 'Vengeance'};
 
 client.on('ready', () => {
     console.log("I am reborn!");
 });
 
-client.on('message', msg => {
+client.login(botUserToken);
 
-    let prefix = "!";
+client.on("message", msg => {
+    const prefix = "!";
 
     if (!msg.content.startsWith(prefix)) return;
 
     if (msg.content === prefix + "help") {
-        msg.channel.sendMessage("I'm BlizzardAPI Bot!  Try " + prefix + "tellme {realm} {character} to get information!");
-        return;
+        msg.channel.sendMessage("Use " + prefix + "tellme {realm} {character} to get information!");
     }
 
     if (msg.content.startsWith(prefix + "tellme")) {
-        var params = splitMessage(msg.content);
-        var ilvlApiFill = apiFill(ilvlApi, params[0], params[1], '');
-        var statsApiFill = apiFill(statsApi, params[0], params[1], '');
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", ilvlApiFill, true);
-        xhr.onload = function (e) {
+        const ilvlApiFill = apiFill(ilvlApi, splitMessage(msg.content)[0], splitMessage(msg.content)[1], "");
+        const statsApiFill = apiFill(statsApi, splitMessage(msg.content)[0], splitMessage(msg.content)[1], "");
+        let character, legendaryNames, legendaryIds, legendarySlot;
 
-            if (xhr.readyState === 4) {
-                var ilvlApiFillRes = JSON.parse(xhr.responseText);
-
-                if (xhr.status === 200) {
-                    var character = params[1];
-                    var realm = params[0];
-                    var avgIlvl = ilvlApiFillRes.items.averageItemLevel;
-                    var avgIlvlE = ilvlApiFillRes.items.averageItemLevelEquipped;
-                    var achievePt = ilvlApiFillRes.achievementPoints;
-                    
-                    var arr = new Array();
-                    var arr2 = new Array();
-                    var arr3 = new Array();
-                    for (let i = 2; i < Object.keys(ilvlApiFillRes.items).length; i++) {
-                        var armorType = Object.keys(ilvlApiFillRes.items)[i];
-                        if (ilvlApiFillRes.items[armorType].quality === 5) {
-                            arr[i] = ilvlApiFillRes.items[armorType].name
-                            arr2[i] = ilvlApiFillRes.items[armorType].id;
-                            arr3[i] = armorType;
-                        }
-                    }
-
-                    legendaryNames = arr.filter(function(e){return e});
-                    console.log(legendaryNames);
-                    legendaryIds = arr2.filter(function(e){return e}); 
-                    console.log(legendaryIds);
-                    legendarySlot = arr3.filter(function(e){return e});
-                    console.log(legendarySlot);
-
-                    var thisClass = classNames[ilvlApiFillRes.class - 1];
-                    var thisSpec = specNames[ilvlApiFillRes.items.mainHand.name];
-                    
-
-                    msg.channel.sendMessage(character[0].toUpperCase() + character.substring(1) + ' - ' + thisSpec + ' ' + thisClass + ' (' + avgIlvl+ '/'+avgIlvlE+' equipped)');
-                    msg.channel.sendMessage('*** Artifact Weapon ***');
-                    msg.channel.sendMessage(ilvlApiFillRes.items.mainHand.name + ' (' + ilvlApiFillRes.items.mainHand.itemLevel + ')');
-                    
-
-                    if (legendaryNames.length === 1) {
-                        var xhr2 = new XMLHttpRequest();
-                        xhr2.open("GET", statsApiFill, true);
-                        xhr2.onload = function (e) {
-                            if (xhr2.readyState === 4) {
-                                var statsApiFillRes = JSON.parse(xhr2.responseText);
-
-                                if (xhr2.status === 200) {
-                                    msg.channel.sendMessage('*** Stats ***');
-                                    msg.channel.sendMessage('**Crit**: ' + statsApiFillRes.stats.crit.toFixed(2) + '%' + 
-                                                            ' **Haste**: ' + statsApiFillRes.stats.haste.toFixed(2) +'%' +
-                                                            ' **Mastery**: ' + statsApiFillRes.stats.mastery.toFixed(2) +'%' +
-                                                            ' **Vers**: ' + statsApiFillRes.stats.versatilityDamageDoneBonus.toFixed(2) +'%\n' +
-                                                            '*** Legendaries ***'
-                                                            );
-                                    var xhr3 = new XMLHttpRequest();
-                                    var itemApiFill = apiFill(itemApi, '', '', legendaryIds[0]);
-                                    xhr3.open("GET", itemApiFill, true);
-                                    xhr3.onload = function (e) {
-                                        if (xhr3.readyState === 4) {
-                                            var itemApiFillRes = JSON.parse(xhr3.responseText);
-                                            if(xhr3.status === 200) {
-                                                msg.channel.sendMessage(legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillRes.itemSpells[0].spell.description);
-                                            } else {
-                                                msg.channel.sendMessage(itemApiFillRes.reason);
-                                            }  
-                                        }
-                                    }
-                                    xhr3.onerror = function (e) {
-                                        console.error(xhr3.statusText);
-                                    };
-                                    xhr3.send(null);
-                                } else {
-                                    console.error(statsApiFillRes.reason);
-                                    msg.channel.sendMessage(statsApiFillRes.reason);
-                                }
-                            }
-                        }
-                        xhr2.onerror = function (e) {
-                            console.error(xhr2.statusText);
-                        }
-                        xhr2.send(null);
-
-                        
-
-                    } else if (legendaryNames.length === 2) {
-                        var xhr2 = new XMLHttpRequest();
-                        xhr2.open("GET", statsApiFill, true);
-                        xhr2.onload = function (e) {
-                            if (xhr2.readyState === 4) {
-                                var statsApiFillRes = JSON.parse(xhr2.responseText);
-                                
-                                if (xhr2.status === 200) {
-                                    msg.channel.sendMessage('*** Stats ***');
-                                    msg.channel.sendMessage('**Crit**: ' + statsApiFillRes.stats.crit.toFixed(2) + '%' + 
-                                                            ' **Haste**: ' + statsApiFillRes.stats.haste.toFixed(2) +'%' +
-                                                            ' **Mastery**: ' + statsApiFillRes.stats.mastery.toFixed(2) +'%' +
-                                                            ' **Vers**: ' + statsApiFillRes.stats.versatilityDamageDoneBonus.toFixed(2) +'%\n' +
-                                                            '*** Legendaries ***'
-                                                            );
-
-                                        var xhr3 = new XMLHttpRequest();
-                                        var itemApiFillOne = apiFill(itemApi, '', '', legendaryIds[0]);
-                                        xhr3.open("GET", itemApiFillOne, true);
-                                        xhr3.onload = function (e) {
-                                            if (xhr3.readyState === 4) {
-                                                console.log("I'm second");
-                                                var itemApiFillOneRes = JSON.parse(xhr3.responseText);
-                                                if(xhr3.status === 200) {
-                                                    console.log(legendarySlot[0]);
-                                                    msg.channel.sendMessage(legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillOneRes.itemSpells[0].spell.description);
-                                                } else {
-                                                    msg.channel.sendMessage(itemApiFillOneRes.reason);
-                                                }  
-                                            }
-                                        }
-                                        xhr3.onerror = function (e) {
-                                            console.error(xhr3.statusText);
-                                        };
-                                        xhr3.send(null);
-
-                                        var xhr4 = new XMLHttpRequest();
-                                        var itemApiFillTwo = apiFill(itemApi, '', '', legendaryIds[1]);
-                                        xhr4.open("GET", itemApiFillTwo, true);
-                                        xhr4.onload = function (e) {
-                                            if (xhr4.readyState === 4) {
-                                                var itemApiFillTwoRes = JSON.parse(xhr4.responseText);
-                                                if(xhr4.status === 200) {
-                                                    console.log(legendarySlot[1]);
-                                                    msg.channel.sendMessage(legendaryNames[1] + " (" + legendarySlot[1] + ") - " + itemApiFillTwoRes.itemSpells[0].spell.description);
-                                                } else {
-                                                    msg.channel.sendMessage(itemApiFillTwoRes.reason);
-                                                }  
-                                            }
-                                        }
-                                        xhr4.onerror = function (e) {
-                                            console.error(xhr4.statusText);
-                                        };
-                                        xhr4.send(null);
-                                } else {
-                                    console.error(statsApiFillRes.reason);
-                                    msg.channel.sendMessage(statsApiFillRes.reason);
-                                }
-                            }
-                        }
-                        xhr2.onerror = function (e) {
-                            console.error(xhr2.statusText);
-                        }
-                        xhr2.send(null);
-                    
-                    } else if (legendaryNames.length === 0) {
-                        msg.channel.sendMessage("No legendaries :(");
-                    }
-
+        //first request for basic class and ilvl information
+        request.get({url:ilvlApiFill}, function optionalCallback(err, httpResponse) {
+            //iterate through and find legendary items, put them in arrays
+            const ilvlApiFillRes = JSON.parse(httpResponse.body);
+            let arr = new Array(), arr2 = new Array(), arr3 = new Array();
+            for (let i = 2; i < Object.keys(ilvlApiFillRes.items).length; i++) {
+                const armorType = Object.keys(ilvlApiFillRes.items)[i];
+                if (ilvlApiFillRes.items[armorType].quality === 5) {
+                    arr[i] = ilvlApiFillRes.items[armorType].name;
+                    arr2[i] = ilvlApiFillRes.items[armorType].id;
+                    arr3[i] = armorType;
                 }
-
-            } else {
-                console.error(ilvlApiFillRes.reason);
-                msg.channel.sendMessage(ilvlApiFillRes.reason);
             }
-        }
+            legendaryNames = arr.filter(function(e){return e});
+            legendaryIds = arr2.filter(function(e){return e});
+            legendarySlot = arr3.filter(function(e){return e});
 
-        xhr.onerror = function (e) {
-            console.error(xhr.statusText);
-        }
+            character = splitMessage(msg.content)[1];
+            msg.channel.sendMessage(character[0].toUpperCase() +
+                character.substring(1) + " - " + specNames[ilvlApiFillRes.items.mainHand.name] + " " + classNames[ilvlApiFillRes.class - 1] +
+                " (" + ilvlApiFillRes.items.averageItemLevel + "/" + ilvlApiFillRes.items.averageItemLevelEquipped + " equipped)");
+            msg.channel.sendMessage("*** Artifact Weapon *** - " +
+                ilvlApiFillRes.items.mainHand.name + " (" + ilvlApiFillRes.items.mainHand.itemLevel + ")");
 
-        xhr.send(null);
+            //next request for stats
+            request.get({url:statsApiFill}, function optionalCallback(err, httpResponse) {
+                msg.channel.sendMessage(statsMessage(JSON.parse(httpResponse.body)));
+                //finally request for legendary item descriptions, if available
+                if (legendaryNames.length === 0) {
+                    msg.channel.sendMessage("***No legendaries :(***");
+                } else if (legendaryNames.length === 1) {
+                    const itemApiFill = apiFill(itemApi, "", "", legendaryIds[0]);
+                    request.get({url:itemApiFill}, function optionalCallback(err, httpResponse) {
+                        const itemApiFillRes = JSON.parse(httpResponse.body);
+                        msg.channel.sendMessage("***Legendary*** - " + legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillRes.itemSpells[0].spell.description);
+                    });
+                } else if (legendaryNames.length === 2) {
+                    const itemApiFill = apiFill(itemApi, "", "", legendaryIds[0]);
+                    request.get({url:itemApiFill}, function optionalCallback(err, httpResponse) {
+                        const itemApiFillRes = JSON.parse(httpResponse.body);
+                        msg.channel.sendMessage("***Legendary*** - " + legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillRes.itemSpells[0].spell.description);
+                    });
+                    const itemApiFill2 = apiFill(itemApi, "", "", legendaryIds[1]);
+                    request.get({url:itemApiFill2}, function optionalCallback(err, httpResponse) {
+                        const itemApiFillRes2 = JSON.parse(httpResponse.body);
+                        msg.channel.sendMessage("***Legendary*** - " + legendaryNames[1] + " (" + legendarySlot[1] + ") - " + itemApiFillRes2.itemSpells[0].spell.description)
+                    });
+                }
+            });
+        });
     }
-
 });
 
 function splitMessage (message) {
-    var splitMsg = message.split(" ");
-    var splitMsgL = splitMsg.length
-    if (splitMsgL === 4) {
-        var realm = splitMsg[1] + " " + splitMsg[2];
-        var character = splitMsg[3];
-        var splitMessageR = [realm, character];
+    const splitMsg = message.split(" ");
 
-    } else if (splitMsgL === 3) {
-        var realm = splitMsg[1];
-        var character = splitMsg[2];
-        var splitMessageR = [realm, character];
+    if (splitMsg.length === 4) {
+        return [splitMsg[1] + " " + splitMsg[2], splitMsg[3]];
+    } else if (splitMsg.length === 3) {
+        return [splitMsg[1], splitMsg[2]];
     }
-
-    return splitMessageR;
-
 }
 
 function apiFill (endpoint, realm, character, id) {
-    if (realm === '' && character === '') {
-        var api = endpoint.replace("{id}", id);
-        return api;
-
-    } else if (id === '') {
-        var api = endpoint.replace("{realm}", realm).replace("{character}", character);
-        return api;
-
+    if (realm === "" && character === "") {
+        return endpoint.replace("{id}", id);
+    } else if (id === "") {
+        return endpoint.replace("{realm}", realm).replace("{character}", character);
     }
-
 }
 
-client.login(botUserToken);
+function statsMessage (JSON) {
+    return  "*** Stats *** - **Crit**: " + JSON.stats.crit.toFixed(2) + "%" +
+            " **Haste**: " + JSON.stats.haste.toFixed(2) + "%" +
+            " **Mastery**: " + JSON.stats.mastery.toFixed(2) + "%" +
+            " **Vers**: " + JSON.stats.versatilityDamageDoneBonus.toFixed(2) + "%\n"
+}
