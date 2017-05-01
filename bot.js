@@ -136,9 +136,6 @@ client.on("message", msg => {
                         msg.channel.sendMessage(convertPrice(results[0].priceavg));
                     }
                 });
-
-                connection.release();
-
             }
         });
     }
