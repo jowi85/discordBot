@@ -123,7 +123,7 @@ function apiFill (endpoint, realm, character, id) {
     if (realm === "" && character === "") {
         return endpoint.replace("{id}", id);
     } else if (id === "") {
-        return endpoint.replace("{realm}", realm).replace("{character}", character);
+        return endpoint.replace("{realm}", realm).replace("{character}", encodeURIComponent(character));
     }
 }
 
