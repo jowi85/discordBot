@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const client = new Discord.Client();
 const request = require("request");
+const mysql = require('mysql');
 
 const botUserToken = process.env.BOT_TOKEN;
 const blizzardAPIKey = process.env.API_KEY;
@@ -11,30 +12,30 @@ const statsApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fi
 
 const classNames = ["Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Death Knight", "Shaman", "Mage", "Warlock", "Monk", "Druid", "Demon Hunter"];
 const specNames = {
-        //warrior
-        'Scaleshard': 'Protection', 'Strom\'kar, the Warbreaker': 'Arms', 'Warswords of the Valarjar': 'Fury',
-        //paladin
-        'Oathseeker': 'Protection', 'Ashbringer': 'Retribution', 'The Silver Hand': 'Holy',
-        //hunter
-        'Thas\'dorah, Legacy of the Windrunners': 'Marksmanship', 'Talonclaw': 'Survival', 'Titanstrike': 'Beast Mastery',
-        //rogue
-        'The Kingslayers': 'Assassination', 'The Dreadblades': 'Outlaw', 'Fangs of the Devourer': 'Subtelty',
-        //priest
-        'T\'uure, Beacon of the Naaru': 'Holy', 'Light\'s Wrath': 'Discipline', 'Xal\'atath, Blade of the Black Empire': 'Shadow',
-        //death knight
-        'Maw of the Damned': 'Blood', 'Frostreaper': 'Frost', 'Apocalypse': 'Unholy',
-        //shaman
-        'The Fist of Ra-den': 'Elemental', 'Doomhammer': 'Enhancement', 'Sharas\'dal, Scepter of Tides': 'Restoration',
-        //mage
-        'Aluneth': 'Arcane', 'Felo\'melorn': 'Fire', 'Ebonchill': 'Frost',
-        //warlock
-        'Spine of Thal\'kiel': 'Demonology', 'Scepter of Sargeras': 'Destruction', 'Ulthalesh, the Deadwind Harvester': 'Affliction',
-        //monk
-        'Sheilun, Staff of the Mists': 'Mistweaver', 'Fists of the Heavens': 'Windwalker', 'Fu Zan, the Wanderer\'s Companion': 'Brewmaster',
-        //druid
-        'Fangs of Ashmane': 'Feral', 'Claws of Ursoc': 'Guardian', 'G\'Hanir, the Mother Tree': 'Restoration', 'Scythe of Elune': 'Balance',
-        //demon hunter
-        'Twinblades of the Deceiver': 'Havoc', 'Aldrachi Warblades': 'Vengeance'};
+    //warrior
+    'Scaleshard': 'Protection', 'Strom\'kar, the Warbreaker': 'Arms', 'Warswords of the Valarjar': 'Fury',
+    //paladin
+    'Oathseeker': 'Protection', 'Ashbringer': 'Retribution', 'The Silver Hand': 'Holy',
+    //hunter
+    'Thas\'dorah, Legacy of the Windrunners': 'Marksmanship', 'Talonclaw': 'Survival', 'Titanstrike': 'Beast Mastery',
+    //rogue
+    'The Kingslayers': 'Assassination', 'The Dreadblades': 'Outlaw', 'Fangs of the Devourer': 'Subtelty',
+    //priest
+    'T\'uure, Beacon of the Naaru': 'Holy', 'Light\'s Wrath': 'Discipline', 'Xal\'atath, Blade of the Black Empire': 'Shadow',
+    //death knight
+    'Maw of the Damned': 'Blood', 'Frostreaper': 'Frost', 'Apocalypse': 'Unholy',
+    //shaman
+    'The Fist of Ra-den': 'Elemental', 'Doomhammer': 'Enhancement', 'Sharas\'dal, Scepter of Tides': 'Restoration',
+    //mage
+    'Aluneth': 'Arcane', 'Felo\'melorn': 'Fire', 'Ebonchill': 'Frost',
+    //warlock
+    'Spine of Thal\'kiel': 'Demonology', 'Scepter of Sargeras': 'Destruction', 'Ulthalesh, the Deadwind Harvester': 'Affliction',
+    //monk
+    'Sheilun, Staff of the Mists': 'Mistweaver', 'Fists of the Heavens': 'Windwalker', 'Fu Zan, the Wanderer\'s Companion': 'Brewmaster',
+    //druid
+    'Fangs of Ashmane': 'Feral', 'Claws of Ursoc': 'Guardian', 'G\'Hanir, the Mother Tree': 'Restoration', 'Scythe of Elune': 'Balance',
+    //demon hunter
+    'Twinblades of the Deceiver': 'Havoc', 'Aldrachi Warblades': 'Vengeance'};
 
 client.on('ready', () => {
     console.log("I am reborn!");
@@ -107,6 +108,40 @@ client.on("message", msg => {
             });
         });
     }
+
+    if (msg.content.startsWith(prefix + "pricecheck")) {
+        const lookupItem = msg.content.split(prefix + "pricecheck ")[1].replace(" ", "%20");
+
+        request.get({url:"https://www.wowhead.com/item="+lookupItem+"&xml"}, function optionalCallback(err, httpResponse) {
+            if (httpResponse.body.includes("Item not found!")) {
+
+                msg.channel.sendMessage(msg.content.split(prefix + "pricecheck")[1] + " is not a valid item.");
+
+            } else {
+
+                const lookupItemId = httpResponse.body.split("item id=\"")[1].split("\"")[0];
+
+                const connection = mysql.createConnection({
+                    host    : 'newswire.theunderminejournal.com',
+                    user    : 'anonymous',
+                    database: 'newsstand'
+                });
+
+                connection.connect();
+
+                connection.query("SELECT * FROM `tblItemHistoryDaily` WHERE `item` = " + lookupItemId + " AND `house` = 45 ORDER BY `when` DESC;", function(error, results) {
+                    if (results.length === 0) {
+                        msg.channel.sendMessage(msg.content.split(prefix + "pricecheck")[1] + " was not found.");
+                    } else {
+                        msg.channel.sendMessage(convertPrice(results[0].priceavg));
+                    }
+                });
+
+                connection.release();
+
+            }
+        });
+    }
 });
 
 function splitMessage (message) {
@@ -127,9 +162,17 @@ function apiFill (endpoint, realm, character, id) {
     }
 }
 
+function convertPrice (rawPrice) {
+    if (rawPrice < 100) {
+        return "0." + (rawPrice/100).toString().split(".")[1] + "G";
+    } else if (rawPrice >= 100) {
+        return (rawPrice/100).toString().split(".")[0] + "." + (rawPrice/100).toString().split(".")[1] + "G";
+    }
+}
+
 function statsMessage (JSON) {
     return  "*** Stats *** - **Crit**: " + JSON.stats.crit.toFixed(2) + "%" +
-            " **Haste**: " + JSON.stats.haste.toFixed(2) + "%" +
-            " **Mastery**: " + JSON.stats.mastery.toFixed(2) + "%" +
-            " **Vers**: " + JSON.stats.versatilityDamageDoneBonus.toFixed(2) + "%\n"
+        " **Haste**: " + JSON.stats.haste.toFixed(2) + "%" +
+        " **Mastery**: " + JSON.stats.mastery.toFixed(2) + "%" +
+        " **Vers**: " + JSON.stats.versatilityDamageDoneBonus.toFixed(2) + "%\n"
 }
