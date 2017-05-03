@@ -110,7 +110,7 @@ client.on("message", msg => {
         });
     }
 
-    if (msg.content.startsWith(prefix + "pricecheck")) {
+    if (msg.content.startsWith(prefix + + prefix + "pricecheck")) {
         const lookupItem = msg.content.split(prefix + "pricecheck ")[1].replace(" ", "%20");
 
         request.get({url:"https://www.wowhead.com/item="+lookupItem+"&xml"}, function optionalCallback(err, httpResponse) {
