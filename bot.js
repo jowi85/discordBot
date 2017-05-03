@@ -2,6 +2,7 @@ const Discord = require("discord.js");
 const client = new Discord.Client();
 const request = require("request");
 const mysql = require('mysql');
+const MongoClient = require('mongodb').MongoClient;
 
 const botUserToken = process.env.BOT_TOKEN;
 const blizzardAPIKey = process.env.API_KEY;
@@ -121,19 +122,25 @@ client.on("message", msg => {
 
                 const lookupItemId = httpResponse.body.split("item id=\"")[1].split("\"")[0];
 
-                const connection = mysql.createConnection({
-                    host    : 'newswire.theunderminejournal.com',
-                    user    : 'anonymous',
-                    database: 'newsstand'
-                });
-
-                connection.connect();
-
-                connection.query("SELECT * FROM `tblItemHistoryDaily` WHERE `item` = " + lookupItemId + " AND `house` = 45 ORDER BY `when` DESC;", function(error, results) {
-                    if (results.length === 0) {
-                        msg.channel.sendMessage(msg.content.split(prefix + "pricecheck")[1] + " was not found.");
+                MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
+                    if (err) {
+                        msg.channel.sendMessage("Joey only has the database locally.  Ask him to turn it on!");
                     } else {
-                        msg.channel.sendMessage(convertPrice(results[0].priceavg));
+                        db.collection('auctions').aggregate(
+                            {
+                                $match:
+                                    {"item":parseInt(lookupItemId)}
+                            },
+                            {
+                                $group:
+                                    {_id: null, avgAmnt: {$avg: {$divide: ["$buyout","$quantity"]}}}
+                            },
+                            {
+                                $sort: {_id: -1}
+                            }, function(err, result) {
+                                msg.channel.sendMessage(msg.content.split(prefix + "pricecheck ")[1] + ": " + convertPrice(result[0].avgAmnt) + " (average buyout per one)");
+                            }
+                        );
                     }
                 });
             }
@@ -161,9 +168,9 @@ function apiFill (endpoint, realm, character, id) {
 
 function convertPrice (rawPrice) {
     if (rawPrice < 100) {
-        return "0." + (rawPrice/100).toString().split(".")[1] + "G";
+        return "0." + (rawPrice/100).toString().split(".")[1] + "g";
     } else if (rawPrice >= 100) {
-        return (rawPrice/100).toString().split(".")[0] + "." + (rawPrice/100).toString().split(".")[1] + "G";
+        return (rawPrice/10000).toString().split(".")[0] + "." + (rawPrice/10000).toString().split(".")[1].substring(0,2) + "g";
     }
 }
 
