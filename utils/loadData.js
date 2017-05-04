@@ -9,7 +9,6 @@ MongoClient.connect(props.mongodburl, function(err, db) {
             if (err) {console.log(err);}
         });
         for (let i = 0; i < data.auctions.length; i++) {
-            console.log(data.auctions.length);
             db.collection("auctions").insertMany([data.auctions[i]], function(err, r) {
                 if (err) {
                     db.close();
