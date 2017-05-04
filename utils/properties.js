@@ -1,8 +1,6 @@
-// const botUserToken = process.env.BOT_TOKEN;
-const botUserToken = "MjM4MDM4Njk1NzM3ODE5MTM4.CugaVA.VxJQUbsOXax0bhrSPdxS3HMRwVs";
+const botUserToken = process.env.BOT_TOKEN;
 exports.botUserToken = botUserToken;
-// const blizzardAPIKey = process.env.API_KEY;
-const blizzardAPIKey = "9jgj6gnfgr7wjgn6w5db8vpfpatam2uy";
+const blizzardAPIKey = process.env.API_KEY;
 exports.blizzardAPIKey = blizzardAPIKey;
 const mongodburl = "mongodb://localhost:27017/test";
 exports.mongodburl = mongodburl;
