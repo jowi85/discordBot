@@ -1,1 +1,1 @@
-# wowDiscordBot
+# discordBot
