@@ -90,22 +90,26 @@ client.on("message", msg => {
 
                 MongoClient.connect(props.mongodburl, function(err, db) {
                     if (err) {
-                        msg.channel.sendMessage("Joey only has the database locally.  Ask him to turn it on!");
+                        msg.channel.sendMessage("Something is wrong! Couldn't connect to db");
                         db.close();
                     } else {
                         db.collection('auctions').aggregate(
                             {$match:
                                 {"item":parseInt(lookupItemId)}},
                             {$group:
-                                {_id: null, avgAmnt: {$avg: {$divide: ["$buyout","$quantity"]}}}},
-                            {$sort: {_id: -1}},
+                                {_id: "$quantity", avgAmnt: {$avg: "$buyout"}, count: {$sum:1}}},
+                            {$sort: {_id:-1}},
                             function(err, result) {
                                 console.log(result);
                                 if (result.length === 0) {
                                     msg.channel.sendMessage(msg.content.split(prefix + "pricecheck ")[1] + " is not on the auction house");
                                     db.close();
-                                } else {
-                                    msg.channel.sendMessage(msg.content.split(prefix + "pricecheck ")[1] + ": " + convertPrice(result[0].avgAmnt) + " (average buyout per one)");
+                                } else if (result.length === 1) {
+                                    msg.channel.sendMessage(msg.content.split(prefix + "pricecheck ")[1] + ": " + convertPrice(result[0].avgAmnt) + "g per " + result[0]._id);
+                                    db.close();
+                                } else if (result.length >= 1) {
+                                    msg.channel.sendMessage(msg.content.split(prefix + "pricecheck ")[1] + ": " + convertPrice(result[0].avgAmnt) + "g per " + result[0]._id + ", " +
+                                        (convertPrice(result[0].avgAmnt) / (result[0]._id)).toFixed(2) + " per 1");
                                     db.close();
                                 }
                             }
@@ -137,9 +141,9 @@ function apiFill (endpoint, realm, character, id) {
 
 function convertPrice (rawPrice) {
     if (rawPrice < 100) {
-        return "0." + (rawPrice/100).toString().split(".")[1] + "g";
+        return parseInt((rawPrice/100).toFixed(2));
     } else if (rawPrice >= 100) {
-        return (rawPrice/10000).toString().split(".")[0] + "." + (rawPrice/10000).toString().split(".")[1].substring(0,2) + "g";
+        return parseFloat((rawPrice/10000).toFixed(2));
     }
 }
 
