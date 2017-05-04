@@ -3,14 +3,20 @@ const client = new Discord.Client();
 const request = require("request");
 const mysql = require('mysql');
 const MongoClient = require('mongodb').MongoClient;
+const fs = require('fs');
 
-const botUserToken = process.env.BOT_TOKEN;
-const blizzardAPIKey = process.env.API_KEY;
+// const botUserToken = process.env.BOT_TOKEN;
+const botUserToken = "MjM4MDM4Njk1NzM3ODE5MTM4.CugaVA.VxJQUbsOXax0bhrSPdxS3HMRwVs";
+// const blizzardAPIKey = process.env.API_KEY;
+const blizzardAPIKey = "9jgj6gnfgr7wjgn6w5db8vpfpatam2uy";
+const mongodburl = "mongodb://localhost:27017/test";
 
 const ilvlApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=items&locale=en_US&apikey="+blizzardAPIKey;
 const itemApi = "https://us.api.battle.net/wow/item/{id}?locale=en_US&apikey="+blizzardAPIKey;
 const statsApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=stats&locale=en_US&apikey="+blizzardAPIKey;
+const auctionAPI = "https://us.api.battle.net/wow/auction/data/dalaran?locale=en_US&apikey="+blizzardAPIKey;
 
+const data = require('./auctions.json');
 const classNames = ["Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Death Knight", "Shaman", "Mage", "Warlock", "Monk", "Druid", "Demon Hunter"];
 const specNames = {
     //warrior
@@ -47,105 +53,138 @@ client.login(botUserToken);
 client.on("message", msg => {
     const prefix = "!";
 
-    if (!msg.content.startsWith(prefix)) return;
+if (!msg.content.startsWith(prefix)) return;
 
-    if (msg.content === prefix + "help") {
-        msg.channel.sendMessage("Use " + prefix + "tellme {realm} {character} to get information!");
-    }
+if (msg.content === prefix + "help") {
+    msg.channel.sendMessage("Use " + prefix + "tellme {realm} {character} to get information!");
+}
 
-    if (msg.content.startsWith(prefix + "tellme")) {
-        const ilvlApiFill = apiFill(ilvlApi, splitMessage(msg.content)[0], splitMessage(msg.content)[1], "");
-        const statsApiFill = apiFill(statsApi, splitMessage(msg.content)[0], splitMessage(msg.content)[1], "");
-        let character, legendaryNames, legendaryIds, legendarySlot;
+if (msg.content.startsWith(prefix + "tellme")) {
+    const ilvlApiFill = apiFill(ilvlApi, splitMessage(msg.content)[0], splitMessage(msg.content)[1], "");
+    const statsApiFill = apiFill(statsApi, splitMessage(msg.content)[0], splitMessage(msg.content)[1], "");
+    let character, legendaryNames, legendaryIds, legendarySlot;
 
-        //first request for basic class and ilvl information
-        request.get({url:ilvlApiFill}, function optionalCallback(err, httpResponse) {
-            //iterate through and find legendary items, put them in arrays
-            const ilvlApiFillRes = JSON.parse(httpResponse.body);
-            let arr = new Array(), arr2 = new Array(), arr3 = new Array();
-            for (let i = 2; i < Object.keys(ilvlApiFillRes.items).length; i++) {
-                const armorType = Object.keys(ilvlApiFillRes.items)[i];
-                if (ilvlApiFillRes.items[armorType].quality === 5) {
-                    arr[i] = ilvlApiFillRes.items[armorType].name;
-                    arr2[i] = ilvlApiFillRes.items[armorType].id;
-                    arr3[i] = armorType;
-                }
+    //first request for basic class and ilvl information
+    request.get({url:ilvlApiFill}, function optionalCallback(err, httpResponse) {
+        //iterate through and find legendary items, put them in arrays
+        const ilvlApiFillRes = JSON.parse(httpResponse.body);
+        let arr = new Array(), arr2 = new Array(), arr3 = new Array();
+        for (let i = 2; i < Object.keys(ilvlApiFillRes.items).length; i++) {
+            const armorType = Object.keys(ilvlApiFillRes.items)[i];
+            if (ilvlApiFillRes.items[armorType].quality === 5) {
+                arr[i] = ilvlApiFillRes.items[armorType].name;
+                arr2[i] = ilvlApiFillRes.items[armorType].id;
+                arr3[i] = armorType;
             }
-            legendaryNames = arr.filter(function(e){return e});
-            legendaryIds = arr2.filter(function(e){return e});
-            legendarySlot = arr3.filter(function(e){return e});
+        }
+        legendaryNames = arr.filter(function(e){return e});
+        legendaryIds = arr2.filter(function(e){return e});
+        legendarySlot = arr3.filter(function(e){return e});
 
-            character = splitMessage(msg.content)[1];
-            msg.channel.sendMessage(character[0].toUpperCase() +
-                character.substring(1) + " - " + specNames[ilvlApiFillRes.items.mainHand.name] + " " + classNames[ilvlApiFillRes.class - 1] +
-                " (" + ilvlApiFillRes.items.averageItemLevel + "/" + ilvlApiFillRes.items.averageItemLevelEquipped + " equipped)");
-            msg.channel.sendMessage("*** Artifact Weapon *** - " +
-                ilvlApiFillRes.items.mainHand.name + " (" + ilvlApiFillRes.items.mainHand.itemLevel + ")");
+        character = splitMessage(msg.content)[1];
+        msg.channel.sendMessage(character[0].toUpperCase() +
+            character.substring(1) + " - " + specNames[ilvlApiFillRes.items.mainHand.name] + " " + classNames[ilvlApiFillRes.class - 1] +
+            " (" + ilvlApiFillRes.items.averageItemLevel + "/" + ilvlApiFillRes.items.averageItemLevelEquipped + " equipped)");
+        msg.channel.sendMessage("*** Artifact Weapon *** - " +
+            ilvlApiFillRes.items.mainHand.name + " (" + ilvlApiFillRes.items.mainHand.itemLevel + ")");
 
-            //next request for stats
-            request.get({url:statsApiFill}, function optionalCallback(err, httpResponse) {
-                msg.channel.sendMessage(statsMessage(JSON.parse(httpResponse.body)));
-                //finally request for legendary item descriptions, if available
-                if (legendaryNames.length === 0) {
-                    msg.channel.sendMessage("***No legendaries :(***");
-                } else if (legendaryNames.length === 1) {
-                    const itemApiFill = apiFill(itemApi, "", "", legendaryIds[0]);
-                    request.get({url:itemApiFill}, function optionalCallback(err, httpResponse) {
-                        const itemApiFillRes = JSON.parse(httpResponse.body);
-                        msg.channel.sendMessage("***Legendary*** - " + legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillRes.itemSpells[0].spell.description);
-                    });
-                } else if (legendaryNames.length === 2) {
-                    const itemApiFill = apiFill(itemApi, "", "", legendaryIds[0]);
-                    request.get({url:itemApiFill}, function optionalCallback(err, httpResponse) {
-                        const itemApiFillRes = JSON.parse(httpResponse.body);
-                        msg.channel.sendMessage("***Legendary*** - " + legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillRes.itemSpells[0].spell.description);
-                    });
-                    const itemApiFill2 = apiFill(itemApi, "", "", legendaryIds[1]);
-                    request.get({url:itemApiFill2}, function optionalCallback(err, httpResponse) {
-                        const itemApiFillRes2 = JSON.parse(httpResponse.body);
-                        msg.channel.sendMessage("***Legendary*** - " + legendaryNames[1] + " (" + legendarySlot[1] + ") - " + itemApiFillRes2.itemSpells[0].spell.description)
-                    });
-                }
-            });
-        });
-    }
-
-    if (msg.content.startsWith(prefix + prefix + "pricecheck")) {
-        const lookupItem = msg.content.split(prefix + "pricecheck ")[1].replace(" ", "%20");
-
-        request.get({url:"https://www.wowhead.com/item="+lookupItem+"&xml"}, function optionalCallback(err, httpResponse) {
-            if (httpResponse.body.includes("Item not found!")) {
-
-                msg.channel.sendMessage(msg.content.split(prefix + "pricecheck")[1] + " is not a valid item.");
-
-            } else {
-
-                const lookupItemId = httpResponse.body.split("item id=\"")[1].split("\"")[0];
-
-                MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
-                    if (err) {
-                        msg.channel.sendMessage("Joey only has the database locally.  Ask him to turn it on!");
-                    } else {
-                        db.collection('auctions').aggregate(
-                            {
-                                $match:
-                                    {"item":parseInt(lookupItemId)}
-                            },
-                            {
-                                $group:
-                                    {_id: null, avgAmnt: {$avg: {$divide: ["$buyout","$quantity"]}}}
-                            },
-                            {
-                                $sort: {_id: -1}
-                            }, function(err, result) {
-                                msg.channel.sendMessage(msg.content.split(prefix + "pricecheck ")[1] + ": " + convertPrice(result[0].avgAmnt) + " (average buyout per one)");
-                            }
-                        );
-                    }
+        //next request for stats
+        request.get({url:statsApiFill}, function optionalCallback(err, httpResponse) {
+            msg.channel.sendMessage(statsMessage(JSON.parse(httpResponse.body)));
+            //finally request for legendary item descriptions, if available
+            if (legendaryNames.length === 0) {
+                msg.channel.sendMessage("***No legendaries :(***");
+            } else if (legendaryNames.length === 1) {
+                const itemApiFill = apiFill(itemApi, "", "", legendaryIds[0]);
+                request.get({url:itemApiFill}, function optionalCallback(err, httpResponse) {
+                    const itemApiFillRes = JSON.parse(httpResponse.body);
+                    msg.channel.sendMessage("***Legendary*** - " + legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillRes.itemSpells[0].spell.description);
+                });
+            } else if (legendaryNames.length === 2) {
+                const itemApiFill = apiFill(itemApi, "", "", legendaryIds[0]);
+                request.get({url:itemApiFill}, function optionalCallback(err, httpResponse) {
+                    const itemApiFillRes = JSON.parse(httpResponse.body);
+                    msg.channel.sendMessage("***Legendary*** - " + legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillRes.itemSpells[0].spell.description);
+                });
+                const itemApiFill2 = apiFill(itemApi, "", "", legendaryIds[1]);
+                request.get({url:itemApiFill2}, function optionalCallback(err, httpResponse) {
+                    const itemApiFillRes2 = JSON.parse(httpResponse.body);
+                    msg.channel.sendMessage("***Legendary*** - " + legendaryNames[1] + " (" + legendarySlot[1] + ") - " + itemApiFillRes2.itemSpells[0].spell.description)
                 });
             }
         });
-    }
+    });
+}
+
+if (msg.content.startsWith(prefix + "pricecheck")) {
+    const lookupItem = msg.content.split(prefix + "pricecheck ")[1].replace(" ", "%20");
+
+    request.get({url:"https://www.wowhead.com/item="+lookupItem+"&xml"}, function optionalCallback(err, httpResponse) {
+        if (httpResponse.body.includes("Item not found!")) {
+            msg.channel.sendMessage(msg.content.split(prefix + "pricecheck")[1] + " is not a valid item name.");
+
+        } else {
+            const lookupItemId = httpResponse.body.split("item id=\"")[1].split("\"")[0];
+            console.log(lookupItemId);
+
+            MongoClient.connect(mongodburl, function(err, db) {
+                if (err) {
+                    msg.channel.sendMessage("Joey only has the database locally.  Ask him to turn it on!");
+                    db.close();
+                } else {
+                    db.collection('auctions').aggregate(
+                        {$match:
+                            {"item":parseInt(lookupItemId)}},
+                        {$group:
+                            {_id: null, avgAmnt: {$avg: {$divide: ["$buyout","$quantity"]}}}},
+                        {$sort: {_id: -1}},
+                        function(err, result) {
+                            console.log(result);
+                            if (result.length === 0) {
+                                msg.channel.sendMessage(msg.content.split(prefix + "pricecheck ")[1] + " is not on the auction house");
+                                db.close();
+                            } else {
+                                msg.channel.sendMessage(msg.content.split(prefix + "pricecheck ")[1] + ": " + convertPrice(result[0].avgAmnt) + " (average buyout per one)");
+                                db.close();
+                            }
+                        }
+                    );
+                }
+            });
+        }
+    });
+}
+
+if (msg.content.startsWith(prefix + prefix + prefix + "newdata")) {
+    request.get({url:auctionAPI}, function optionalCallback(err, httpResponse) {
+        const auctionJson = JSON.parse(httpResponse.body).files[0].url;
+        request.get({url:auctionJson}).pipe(fs.createWriteStream('./auctions.json'));
+    });
+}
+
+if (msg.content.startsWith(prefix + prefix + prefix + "loaddata")) {
+    MongoClient.connect(mongodburl, function(err, db) {
+        if (err) {console.log(err);
+        } else {
+            db.dropCollection("auctions", function(err, collection) {
+                if (err) {console.log(err);}
+            });
+            for (let i = 0; i < data.auctions.length; i++) {
+                console.log(data.auctions.length);
+                db.collection("auctions").insertMany([data.auctions[i]], function(err, r) {
+                    if (err) {
+                        console.log(err);
+                        db.close();
+                    } else {
+                        //can i make this show me a successful number of rows added?
+                        db.close();
+                    }
+                });
+            }
+        }
+    })
+}
+
 });
 
 function splitMessage (message) {
