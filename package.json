@@ -9,7 +9,6 @@
   "dependencies": {
     "discord.js": "latest",
     "mongodb": "latest",
-    "mysql": "latest",
     "request": "latest"
 
   }
