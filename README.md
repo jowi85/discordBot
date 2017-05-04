@@ -21,3 +21,5 @@
     `env BOT_TOKEN=bottoken env API_KEY=apikey node bot.js`
     
     You will have to provide `BOT_TOKEN` (discord) and `API_KEY` (wow api) and include them in your startup.
+    
+6) The main bot commands are `!tellme server character` and `!pricecheck item`.
