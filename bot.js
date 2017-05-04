@@ -107,7 +107,7 @@ client.on("message", msg => {
                                 } else if (result.length === 1) {
                                     msg.channel.sendMessage(msg.content.split(prefix + "pricecheck ")[1] + ": " + convertPrice(result[0].avgAmnt) + "g per " + result[0]._id);
                                     db.close();
-                                } else if (result.length >= 1) {
+                                } else if (result.length > 1) {
                                     msg.channel.sendMessage(msg.content.split(prefix + "pricecheck ")[1] + ": " + convertPrice(result[0].avgAmnt) + "g per " + result[0]._id + ", " +
                                         (convertPrice(result[0].avgAmnt) / (result[0]._id)).toFixed(2) + " per 1");
                                     db.close();
