@@ -21,8 +21,7 @@ client.on("message", msg => {
         if (!msg.content.startsWith(prefix)) return;
 
         if (msg.content === prefix + "help") {
-            msg.channel.sendMessage("Use " + prefix + "tellme {realm} {character} to get information!");
-            return;
+            msg.channel.sendMessage("Use " + prefix + "tellme {realm} {character} to get character info or " + prefix + "pricecheck for AH info.");
         }
 
         if (msg.content.startsWith(prefix + "tellme")) {
