@@ -13,6 +13,7 @@ client.login(props.botUserToken);
 
 client.on("message", msg => {
     const prefix = "!";
+
     if ((msg.content.match(/!/g)||[]).length >= 2) {
         msg.channel.sendMessage("Stop trying to break me, Ned :P");
 
@@ -30,54 +31,60 @@ client.on("message", msg => {
             let character, legendaryNames, legendaryIds, legendarySlot;
 
             //first request for basic class and ilvl information
-            request.get({url:ilvlApiFill}, function optionalCallback(err, httpResponse) {
-                //iterate through and find legendary items, put them in arrays
-                const ilvlApiFillRes = JSON.parse(httpResponse.body);
-                let arr = new Array(), arr2 = new Array(), arr3 = new Array();
-                for (let i = 2; i < Object.keys(ilvlApiFillRes.items).length; i++) {
-                    const armorType = Object.keys(ilvlApiFillRes.items)[i];
-                    if (ilvlApiFillRes.items[armorType].quality === 5) {
-                        arr[i] = ilvlApiFillRes.items[armorType].name;
-                        arr2[i] = ilvlApiFillRes.items[armorType].id;
-                        arr3[i] = armorType;
+            request.get({url: ilvlApiFill}, function optionalCallback(err, httpResponse) {
+                if (httpResponse.statusCode === 404) {
+                    msg.channel.sendMessage(JSON.parse(httpResponse.body).reason);
+                    // msg.channel.sendMessage(httpResponse.body.reason);
+                } else if (httpResponse.statusCode === 200) {
+                    //iterate through and find legendary items, put them in arrays
+                    const ilvlApiFillRes = JSON.parse(httpResponse.body);
+                    let arr = new Array(), arr2 = new Array(), arr3 = new Array();
+                    for (let i = 2; i < Object.keys(ilvlApiFillRes.items).length; i++) {
+                        const armorType = Object.keys(ilvlApiFillRes.items)[i];
+                        if (ilvlApiFillRes.items[armorType].quality === 5) {
+                            arr[i] = ilvlApiFillRes.items[armorType].name;
+                            arr2[i] = ilvlApiFillRes.items[armorType].id;
+                            arr3[i] = armorType;
+                        }
                     }
+
+                    legendaryNames = arr.filter(function (e) {return e});
+                    legendaryIds = arr2.filter(function (e) {return e});
+                    legendarySlot = arr3.filter(function (e) {return e});
+
+                    character = splitMessage(msg.content)[1];
+                    msg.channel.sendMessage(character[0].toUpperCase() +
+                        character.substring(1) + " - " + props.specNames[ilvlApiFillRes.items.mainHand.name] + " " + props.classNames[ilvlApiFillRes.class - 1] +
+                        " (" + ilvlApiFillRes.items.averageItemLevel + "/" + ilvlApiFillRes.items.averageItemLevelEquipped + " equipped)");
+                    msg.channel.sendMessage("*** Artifact Weapon *** - " +
+                        ilvlApiFillRes.items.mainHand.name + " (" + ilvlApiFillRes.items.mainHand.itemLevel + ")");
+
+                    //next request for stats
+                    request.get({url: statsApiFill}, function optionalCallback(err, httpResponse) {
+                        msg.channel.sendMessage(statsMessage(JSON.parse(httpResponse.body)));
+                        //finally request for legendary item descriptions, if available
+                        if (legendaryNames.length === 0) {
+                            msg.channel.sendMessage("***No legendaries :(***");
+                        } else if (legendaryNames.length === 1) {
+                            const itemApiFill = apiFill(props.itemApi, "", "", legendaryIds[0]);
+                            request.get({url: itemApiFill}, function optionalCallback(err, httpResponse) {
+                                const itemApiFillRes = JSON.parse(httpResponse.body);
+                                msg.channel.sendMessage("***Legendary*** - " + legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillRes.itemSpells[0].spell.description);
+                            });
+                        } else if (legendaryNames.length === 2) {
+                            const itemApiFill = apiFill(props.itemApi, "", "", legendaryIds[0]);
+                            request.get({url: itemApiFill}, function optionalCallback(err, httpResponse) {
+                                const itemApiFillRes = JSON.parse(httpResponse.body);
+                                msg.channel.sendMessage("***Legendary*** - " + legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillRes.itemSpells[0].spell.description);
+                            });
+                            const itemApiFill2 = apiFill(props.itemApi, "", "", legendaryIds[1]);
+                            request.get({url: itemApiFill2}, function optionalCallback(err, httpResponse) {
+                                const itemApiFillRes2 = JSON.parse(httpResponse.body);
+                                msg.channel.sendMessage("***Legendary*** - " + legendaryNames[1] + " (" + legendarySlot[1] + ") - " + itemApiFillRes2.itemSpells[0].spell.description)
+                            });
+                        }
+                    });
                 }
-                legendaryNames = arr.filter(function(e){return e});
-                legendaryIds = arr2.filter(function(e){return e});
-                legendarySlot = arr3.filter(function(e){return e});
-
-                character = splitMessage(msg.content)[1];
-                msg.channel.sendMessage(character[0].toUpperCase() +
-                    character.substring(1) + " - " + props.specNames[ilvlApiFillRes.items.mainHand.name] + " " + props.classNames[ilvlApiFillRes.class - 1] +
-                    " (" + ilvlApiFillRes.items.averageItemLevel + "/" + ilvlApiFillRes.items.averageItemLevelEquipped + " equipped)");
-                msg.channel.sendMessage("*** Artifact Weapon *** - " +
-                    ilvlApiFillRes.items.mainHand.name + " (" + ilvlApiFillRes.items.mainHand.itemLevel + ")");
-
-                //next request for stats
-                request.get({url:statsApiFill}, function optionalCallback(err, httpResponse) {
-                    msg.channel.sendMessage(statsMessage(JSON.parse(httpResponse.body)));
-                    //finally request for legendary item descriptions, if available
-                    if (legendaryNames.length === 0) {
-                        msg.channel.sendMessage("***No legendaries :(***");
-                    } else if (legendaryNames.length === 1) {
-                        const itemApiFill = apiFill(props.itemApi, "", "", legendaryIds[0]);
-                        request.get({url:itemApiFill}, function optionalCallback(err, httpResponse) {
-                            const itemApiFillRes = JSON.parse(httpResponse.body);
-                            msg.channel.sendMessage("***Legendary*** - " + legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillRes.itemSpells[0].spell.description);
-                        });
-                    } else if (legendaryNames.length === 2) {
-                        const itemApiFill = apiFill(props.itemApi, "", "", legendaryIds[0]);
-                        request.get({url:itemApiFill}, function optionalCallback(err, httpResponse) {
-                            const itemApiFillRes = JSON.parse(httpResponse.body);
-                            msg.channel.sendMessage("***Legendary*** - " + legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillRes.itemSpells[0].spell.description);
-                        });
-                        const itemApiFill2 = apiFill(props.itemApi, "", "", legendaryIds[1]);
-                        request.get({url:itemApiFill2}, function optionalCallback(err, httpResponse) {
-                            const itemApiFillRes2 = JSON.parse(httpResponse.body);
-                            msg.channel.sendMessage("***Legendary*** - " + legendaryNames[1] + " (" + legendarySlot[1] + ") - " + itemApiFillRes2.itemSpells[0].spell.description)
-                        });
-                    }
-                });
             });
         }
 
