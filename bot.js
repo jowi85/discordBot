@@ -159,8 +159,6 @@ client.on("message", msg => {
                             }
                         });
                     }
-                    db.collection("auctions").count();
-                    db.close();
                 }
             });
         }
