@@ -157,12 +157,11 @@ client.on("message", msg => {
                             if (err) {
                                 console.log(err);
                                 db.close();
-                            } else {
-                                console.log(r);
-                                db.close();
                             }
                         });
                     }
+                    db.collection("auctions").count();
+                    db.close();
                 }
             });
         }
