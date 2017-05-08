@@ -155,7 +155,6 @@ client.on("message", msg => {
                     for (let i = 0; i < data.auctions.length; i++) {
                         db.collection("auctions").insertMany([data.auctions[i]], function(err, r) {
                             if (err) {
-                                console.log(err);
                                 db.close();
                             }
                         });
