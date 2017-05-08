@@ -4,6 +4,7 @@ const request = require("request");
 const MongoClient = require('mongodb').MongoClient;
 const fs = require('fs');
 const props = require('./utils/properties');
+const data = require('./data/auctions.json');
 
 client.on('ready', () => {
     console.log("I am reborn!");
@@ -135,6 +136,36 @@ client.on("message", msg => {
             }
         }
     }
+
+    if (msg.content.startsWith(prefix + "??fetchData")) {
+        request.get({url:props.auctionApi}, function optionalCallback(err, httpResponse) {
+            const auctionJson = JSON.parse(httpResponse.body).files[0].url;
+            request.get({url:auctionJson}).pipe(fs.createWriteStream('./data/auctions.json'), function optionalCallback (err, result) {
+                msg.channel.sendMessage("I'm done fetching data");
+            });
+        });
+    }
+
+    if (msg.content.startsWith(prefix + "??loadData")) {
+        MongoClient.connect(props.mongodburl, function(err, db) {
+            if (err) {console.log(err);
+            } else {
+                db.dropCollection("auctions", function(err, collection) {
+                    if (err) {console.log(err);}
+                });
+                for (let i = 0; i < data.auctions.length; i++) {
+                    db.collection("auctions").insertMany([data.auctions[i]], function(err, r) {
+                        if (err) {
+                            db.close();
+                        } else {
+                            db.close();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
 });
 
 function splitMessage (message) {
