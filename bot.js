@@ -33,6 +33,10 @@ client.on("message", msg => {
             })
         }
 
+        if (msg.content === prefix + "spreadsheet") {
+            msg.channel.sendMessage("https://docs.google.com/spreadsheets/d/1bgvX-dJ94x2UfDC6wgl0Nh1-JqjfLQcC3-7_jfKYxuU/edit#gid=241918221");
+        }
+
         if (msg.content.startsWith(prefix + "tellme")) {
             if (splitMessage(msg.content) === undefined) {
                 msg.channel.sendMessage("You have to provide a realm and character name");
