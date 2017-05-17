@@ -26,6 +26,13 @@ client.on("message", msg => {
             msg.channel.sendMessage("Use tellme {realm} {character} to get character info or pricecheck for AH info");
         }
 
+        if (msg.content === prefix + "logs") {
+            request.get({url: props.logsAPI}, function optionalCallback(err, httpResponse) {
+              const logId = JSON.parse(httpResponse.body)[JSON.parse(httpResponse.body).length - 1].id;
+              msg.channel.sendMessage("https://www.warcraftlogs.com/reports/" + logId);
+            })
+        }
+
         if (msg.content.startsWith(prefix + "tellme")) {
             if (splitMessage(msg.content) === undefined) {
                 msg.channel.sendMessage("You have to provide a realm and character name");
