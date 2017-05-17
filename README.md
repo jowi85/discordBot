@@ -12,14 +12,14 @@
 
 3) Clone the repo.  Once cloned, navigate to the `/discordBot/` folder and run `npm install`.
 
-4) To populate your database for the first time, navigate to `/discordBot/utils/` and run `fetchData.js` and `loadData.js`.
+4) To populate your database for the first time, use the commands prefix + ??fetchData and prefix + ??loadData.
     Both of these may take a few moments to run, depending.  Note that `fetchData.js` currently returns AH data for US-Dalaran
     server only.  To change this, update `const auctionAPI` in `/discordBot/utils/properties.js`.
 
 5) The bot can now be started with 
 
-    `env BOT_TOKEN=bottoken env API_KEY=apikey node bot.js`
+    `env BOT_TOKEN=bottoken env API_KEY=apikey env LOG_KEY=logkey node bot.js`
     
-    You will have to provide `BOT_TOKEN` (discord) and `API_KEY` (wow api) and include them in your startup.
+    You will have to provide `BOT_TOKEN` (discord), `API_KEY` (wow api), `LOG_KEY` (warcraftlogs) and include them in your startup.
     
-6) The main bot commands are `!tellme server character` and `!pricecheck item`.
+6) The main bot commands are `!tellme server character`, `!pricecheck item`, and `!logs`.
