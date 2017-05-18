@@ -8,8 +8,10 @@
   },
   "dependencies": {
     "discord.js": "latest",
+    "JSONStream": "latest",
     "mongodb": "latest",
-    "request": "latest"
+    "request": "latest",
+    "stream-to-mongo-db": "latest"
 
   }
 }

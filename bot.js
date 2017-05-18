@@ -2,7 +2,8 @@ const Discord = require("discord.js");
 const client = new Discord.Client();
 const request = require("request");
 const MongoClient = require('mongodb').MongoClient;
-const fs = require('fs');
+const streamToMongoDB = require("stream-to-mongo-db").streamToMongoDB;
+const JSONStream = require("JSONStream");
 const props = require('./utils/properties');
 const data = require('./data/auctions.json');
 
@@ -47,9 +48,8 @@ client.on("message", msg => {
 
                 //first request for basic class and ilvl information
                 request.get({url: ilvlApiFill}, function optionalCallback(err, httpResponse) {
-                    if (httpResponse.statusCode === 404) {
+                    if (httpResponse.statusCode === 404 && JSON.parse(httpResponse.body).reason) {
                         msg.channel.send(JSON.parse(httpResponse.body).reason);
-                        // msg.channel.send(httpResponse.body.reason);
                     } else if (httpResponse.statusCode === 200) {
                         //iterate through and find legendary items, put them in arrays
                         const ilvlApiFillRes = JSON.parse(httpResponse.body);
@@ -135,7 +135,7 @@ client.on("message", msg => {
                                             db.close();
                                         } else if (result.length > 1) {
                                             msg.channel.send(msg.content.split(prefix + "pricecheck ")[1] + ": " + convertPrice(result[0].avgAmnt) + "g per " + result[0]._id + ", " +
-                                                (convertPrice(result[0].avgAmnt) / (result[0]._id)).toFixed(2) + " per 1");
+                                                (convertPrice(result[0].avgAmnt) / (result[0]._id)).toFixed(2) + "g per 1");
                                             db.close();
                                         }
                                     }
@@ -147,31 +147,15 @@ client.on("message", msg => {
             }
         }
 
-        if (msg.content.startsWith(prefix + "??fetchData")) {
+        if (msg.content.startsWith(prefix + "??loadData")) {
             request.get({url:props.auctionApi}, function optionalCallback(err, httpResponse) {
                 const auctionJson = JSON.parse(httpResponse.body).files[0].url;
-                request.get({url:auctionJson}).pipe(fs.createWriteStream('./data/auctions.json'), function optionalCallback (err, result) {
-                    msg.channel.send("I'm done fetching data");
-                });
-            });
-        }
-
-        if (msg.content.startsWith(prefix + "??loadData")) {
-            MongoClient.connect(props.mongodburl, function(err, db) {
-                if (err) {console.log(err);
-                } else {
-                    db.dropCollection("auctions", function(err, collection) {
-                        if (err) {console.log(err);}
-                    });
-                    for (let i = 0; i < data.auctions.length; i++) {
-                        db.collection("auctions").insertMany([data.auctions[i]], function(err, r) {
-                            if (err) {
-                                db.close();
-                            }
-                        });
-                    }
-                }
-            });
+                const outputDBConfig = {dbURL: props.mongodburl, collection: "auctions"};
+                const writableStream = streamToMongoDB(outputDBConfig);
+                request.get({url:auctionJson})
+                    .pipe(JSONStream.parse(['auctions', true]))
+                    .pipe(writableStream);
+            })
         }
     }
 });
