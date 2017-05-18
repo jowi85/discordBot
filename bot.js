@@ -149,6 +149,7 @@ client.on("message", msg => {
         if (msg.content.startsWith(prefix + "??loadData")) {
             request.get({url:props.auctionApi}, function optionalCallback(err, httpResponse) {
                 const auctionJson = JSON.parse(httpResponse.body).files[0].url;
+                console.log(auctionJson);
                 const outputDBConfig = {dbURL: props.mongodburl, collection: "auctions"};
                 const writableStream = streamToMongoDB(outputDBConfig);
                 request.get({url:auctionJson})
