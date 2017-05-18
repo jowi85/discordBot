@@ -5,7 +5,6 @@ const MongoClient = require('mongodb').MongoClient;
 const streamToMongoDB = require("stream-to-mongo-db").streamToMongoDB;
 const JSONStream = require("JSONStream");
 const props = require('./properties');
-const data = require('./data/auctions.json');
 
 client.on('ready', () => {
     console.log("I am reborn!");
