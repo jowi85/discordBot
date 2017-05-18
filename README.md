@@ -12,8 +12,8 @@
 
 3) Clone the repo.  Once cloned, navigate to the `/discordBot/` folder and run `npm install`.
 
-4) To populate your database for the first time, use the commands prefix + ??fetchData and prefix + ??loadData.
-    Both of these may take a few moments to run, depending.  Note that `fetchData.js` currently returns AH data for US-Dalaran
+4) To populate your database for the first time or to refresh data, use the command prefix + ??loadData.
+    This may take a few moments to run.  Note that this currently returns AH data for US-Dalaran
     server only.  To change this, update `const auctionAPI` in `/discordBot/utils/properties.js`.
 
 5) The bot can now be started with 
