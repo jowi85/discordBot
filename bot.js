@@ -15,10 +15,11 @@ client.login(props.botUserToken);
 client.on("message", msg => {
     const prefix = "!";
 
-    if ((msg.content.match(/!/g)||[]).length >= 2) {
+    // if ((msg.content.match(/!/g)||[]).length >= 2) {
+    if (msg.content.match(/^![^!]*!/g)) {
         msg.channel.sendMessage("Stop trying to break me, Ned :P");
 
-    } else if ((msg.content.match(/!/g)||[]).length === 1) {
+    } else if (msg.content.match(/^![^!]*/g)) {
 
         if (!msg.content.startsWith(prefix)) return;
 
