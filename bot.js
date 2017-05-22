@@ -125,7 +125,6 @@ client.on("message", msg => {
                                         {_id: "$quantity", avgAmnt: {$avg: "$buyout"}, count: {$sum:1}}},
                                     {$sort: {_id:-1}},
                                     function(err, result) {
-                                        console.log(result);
                                         if (result.length === 0) {
                                             msg.channel.send(msg.content.split(prefix + "pricecheck ")[1] + " is not on the auction house");
                                             db.close();
@@ -147,6 +146,11 @@ client.on("message", msg => {
         }
 
         if (msg.content.startsWith(prefix + "??loadData")) {
+            MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
+                db.dropDatabase(function(err, result) {
+                   msg.channel.send("Dropped old db, rebuilding...");
+                });
+            });
             request.get({url:props.auctionApi}, function optionalCallback(err, httpResponse) {
                 const auctionJson = JSON.parse(httpResponse.body).files[0].url;
                 const outputDBConfig = {dbURL: props.mongodburl, collection: "auctions"};
