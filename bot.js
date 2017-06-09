@@ -34,7 +34,7 @@ client.on("message", msg => {
         }
 
         if (msg.content === prefix + "spreadsheet") {
-            msg.channel.send("https://docs.google.com/spreadsheets/d/1bgvX-dJ94x2UfDC6wgl0Nh1-JqjfLQcC3-7_jfKYxuU/edit#gid=241918221");
+            msg.channel.send("https://wowaudit.com/us/dalaran/forgotten-prophets");
         }
 
         if (msg.content.startsWith(prefix + "tellme")) {
