@@ -15,7 +15,7 @@ const statsApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fi
 exports.statsApi = statsApi;
 const auctionAPI = "https://us.api.battle.net/wow/auction/data/dalaran?locale=en_US&apikey="+blizzardAPIKey;
 exports.auctionApi = auctionAPI;
-const logsAPI = "https://www.warcraftlogs.com:443/v1/reports/user/shawa?api_key="+warcraftLogsAPIKey;
+const logsAPI = "https://www.warcraftlogs.com:443/v1/reports/guild/Forgotten%20Prophets/Dalaran/US?api_key="+warcraftLogsAPIKey;
 exports.logsAPI = logsAPI;
 
 const classNames = ["Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Death Knight", "Shaman", "Mage", "Warlock", "Monk", "Druid", "Demon Hunter"];
