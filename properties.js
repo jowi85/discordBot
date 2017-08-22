@@ -42,7 +42,7 @@ const specNames = {
     //monk
     'Sheilun, Staff of the Mists': 'Mistweaver', 'Fists of the Heavens': 'Windwalker', 'Fu Zan, the Wanderer\'s Companion': 'Brewmaster',
     //druid
-    'Fangs of Ashmane': 'Feral', 'Claws of Ursoc': 'Guardian', 'G\'Hanir, the Mother Tree': 'Restoration', 'Scythe of Elune': 'Balance',
+    'Fangs of Ashamane': 'Feral', 'Claws of Ursoc': 'Guardian', 'G\'Hanir, the Mother Tree': 'Restoration', 'Scythe of Elune': 'Balance',
     //demon hunter
     'Twinblades of the Deceiver': 'Havoc', 'Aldrachi Warblades': 'Vengeance'};
 exports.specNames = specNames;
