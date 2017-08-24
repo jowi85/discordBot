@@ -41,7 +41,7 @@ client.on("message", msg => {
                     url: props.twitchFindUserID + splitMessage(msg.content),
                     headers: {"Client-ID": props.clientID, "Accept": "application/vnd.twitchtv.v5+json"}},
                 function optionalCallback(err, httpResponse) {
-                    console.log(httpResponse.body);
+                    msg.channel.send(JSON.parse(httpResponse.body));
                 })
             }
         }
