@@ -37,11 +37,18 @@ client.on("message", msg => {
             if (splitMessage(msg.content) === undefined) {
                 msg.channel.send("You have to provide a twitch account name");
             } else {
+                const userName = splitMessage(msg.content);
                 request.get({
-                    url: props.twitchFindUserID + splitMessage(msg.content),
+                    url: props.twitchAPI + "/users?login=" + userName,
                     headers: {"Client-ID": props.clientID, "Accept": "application/vnd.twitchtv.v5+json"}},
                 function optionalCallback(err, httpResponse) {
-                    msg.channel.send((httpResponse.body));
+                    const userID = JSON.parse(httpResponse.body).users._id;
+                    request.get({
+                        url: props.twitchAPI + "/channels/" + userID,
+                        headers: {"Client-ID": props.clientID, "Accept": "application/vnd.twitchtv.v5+json"}},
+                    function optionalCallback(err, httpResponse) {
+                        msg.channel.send(userName + "'s Twitch channel: " + JSON.parse(httpResponse.body).url)
+                    })
                 })
             }
         }
