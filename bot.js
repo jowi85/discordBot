@@ -33,6 +33,19 @@ client.on("message", msg => {
             })
         }
 
+        if (msg.content.startsWith(prefix + "vod")) {
+            if (splitMessage(msg.content) === undefined) {
+                msg.channel.send("You have to provide a twitch account name");
+            } else {
+                request.get({
+                    url: props.twitchFindUserID,
+                    headers: {"Client-ID": "ll9qmrqzffy45cq5h02b4vi64pv80v", "Accept": "application/vnd.twitchtv.v5+json"}},
+                function optionalCallback(err, httpResponse) {
+                    console.log(httpResponse.body);
+                })
+            }
+        }
+
         if (msg.content === prefix + "spreadsheet") {
             msg.channel.send("https://wowaudit.com/us/dalaran/forgotten-prophets");
         }
