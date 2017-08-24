@@ -42,7 +42,7 @@ client.on("message", msg => {
                     url: props.twitchAPI + "/users?login=" + userName,
                     headers: {"Client-ID": props.clientID, "Accept": "application/vnd.twitchtv.v5+json"}},
                 function optionalCallback(err, httpResponse) {
-                    if (JSON.parse(httpResponse.body).total === 0) {
+                    if (JSON.parse(httpResponse.body)._total === 0) {
                         msg.channel.send("Invalid Twitch account name")
                     } else {
                         const userID = JSON.parse(httpResponse.body).users[0]._id;
