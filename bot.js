@@ -47,7 +47,13 @@ client.on("message", msg => {
                         url: props.twitchAPI + "/channels/" + userID,
                         headers: {"Client-ID": props.clientID, "Accept": "application/vnd.twitchtv.v5+json"}},
                     function optionalCallback(err, httpResponse) {
-                        msg.channel.send(userName + "'s Twitch channel: " + JSON.parse(httpResponse.body).url)
+                        msg.channel.send(userName + "'s Twitch channel: " + JSON.parse(httpResponse.body).url);
+                        request.get({
+                            url: props.twitchAPI + "/channels/" + userID + '/videos',
+                            headers: {"Client-ID": props.clientID, "Accept": "application/vnd.twitchtv.v5+json"}},
+                            function optionalCallback(err, httpResponse) {
+                            msg.channel.send("Latest video: " + JSON.parse(httpResponse.body).videos[0].url)
+                        })
                     })
                 })
             }
