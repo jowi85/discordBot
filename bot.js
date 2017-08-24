@@ -42,7 +42,7 @@ client.on("message", msg => {
                     url: props.twitchAPI + "/users?login=" + userName,
                     headers: {"Client-ID": props.clientID, "Accept": "application/vnd.twitchtv.v5+json"}},
                 function optionalCallback(err, httpResponse) {
-                    const userID = JSON.parse(httpResponse.body).users._id;
+                    const userID = JSON.parse(httpResponse.body).users[0]._id;
                     request.get({
                         url: props.twitchAPI + "/channels/" + userID,
                         headers: {"Client-ID": props.clientID, "Accept": "application/vnd.twitchtv.v5+json"}},
