@@ -39,7 +39,7 @@ client.on("message", msg => {
             } else {
                 request.get({
                     url: props.twitchFindUserID,
-                    headers: {"Client-ID": "ll9qmrqzffy45cq5h02b4vi64pv80v", "Accept": "application/vnd.twitchtv.v5+json"}},
+                    headers: {"Client-ID": props.clientID, "Accept": "application/vnd.twitchtv.v5+json"}},
                 function optionalCallback(err, httpResponse) {
                     console.log(httpResponse.body);
                 })

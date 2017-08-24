@@ -6,6 +6,8 @@ const warcraftLogsAPIKey = process.env.LOG_KEY;
 exports.warcraftLogsAPIKey = warcraftLogsAPIKey;
 const mongodburl = "mongodb://localhost:27017/test";
 exports.mongodburl = mongodburl;
+const clientID = process.env.CLIENTID;
+exports.clientID = clientID;
 
 const ilvlApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=items&locale=en_US&apikey="+blizzardAPIKey;
 exports.ilvlApi = ilvlApi;
