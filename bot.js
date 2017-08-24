@@ -33,12 +33,12 @@ client.on("message", msg => {
             })
         }
 
-        if (msg.content.startsWith(prefix + "vod")) {
+        if (msg.content.startsWith(prefix + "twitch")) {
             if (splitMessage(msg.content) === undefined) {
                 msg.channel.send("You have to provide a twitch account name");
             } else {
                 request.get({
-                    url: props.twitchFindUserID,
+                    url: props.twitchFindUserID + splitMessage(msg.content),
                     headers: {"Client-ID": props.clientID, "Accept": "application/vnd.twitchtv.v5+json"}},
                 function optionalCallback(err, httpResponse) {
                     console.log(httpResponse.body);
@@ -183,6 +183,8 @@ function splitMessage (message) {
         return [splitMsg[1] + " " + splitMsg[2], splitMsg[3]];
     } else if (splitMsg.length === 3) {
         return [splitMsg[1], splitMsg[2]];
+    } else if (splitMsg.length === 2) {
+        return splitMsg[1];
     }
 }
 

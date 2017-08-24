@@ -19,7 +19,7 @@ const auctionAPI = "https://us.api.battle.net/wow/auction/data/dalaran?locale=en
 exports.auctionApi = auctionAPI;
 const logsAPI = "https://www.warcraftlogs.com:443/v1/reports/guild/Forgotten%20Prophets/Dalaran/US?api_key="+warcraftLogsAPIKey;
 exports.logsAPI = logsAPI;
-const twitchFindUserID = "https://api.twitch.tv/kraken/users?login=eidle_w";
+const twitchFindUserID = "https://api.twitch.tv/kraken/users?login=";
 exports.twitchFindUserID = twitchFindUserID;
 
 
