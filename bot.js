@@ -35,26 +35,34 @@ client.on("message", msg => {
 
         if (msg.content.startsWith(prefix + "twitch")) {
             if (splitMessage(msg.content) === undefined) {
-                msg.channel.send("You have to provide a twitch account name");
+                msg.channel.send("You have to provide a Twitch account name");
             } else {
                 const userName = splitMessage(msg.content);
                 request.get({
                     url: props.twitchAPI + "/users?login=" + userName,
                     headers: {"Client-ID": props.clientID, "Accept": "application/vnd.twitchtv.v5+json"}},
                 function optionalCallback(err, httpResponse) {
-                    const userID = JSON.parse(httpResponse.body).users[0]._id;
-                    request.get({
-                        url: props.twitchAPI + "/channels/" + userID,
-                        headers: {"Client-ID": props.clientID, "Accept": "application/vnd.twitchtv.v5+json"}},
-                    function optionalCallback(err, httpResponse) {
-                        msg.channel.send(userName + "'s Twitch channel: " + JSON.parse(httpResponse.body).url);
+                    if (JSON.parse(httpResponse.body).total === 0) {
+                        msg.channel.send("Invalid Twitch account name")
+                    } else {
+                        const userID = JSON.parse(httpResponse.body).users[0]._id;
                         request.get({
-                            url: props.twitchAPI + "/channels/" + userID + '/videos',
-                            headers: {"Client-ID": props.clientID, "Accept": "application/vnd.twitchtv.v5+json"}},
+                                url: props.twitchAPI + "/channels/" + userID,
+                                headers: {"Client-ID": props.clientID, "Accept": "application/vnd.twitchtv.v5+json"}},
                             function optionalCallback(err, httpResponse) {
-                            msg.channel.send("Latest video: " + JSON.parse(httpResponse.body).videos[0].url)
+                                msg.channel.send(userName + "'s Twitch channel: " + JSON.parse(httpResponse.body).url);
+                                request.get({
+                                        url: props.twitchAPI + "/channels/" + userID + '/videos',
+                                        headers: {"Client-ID": props.clientID, "Accept": "application/vnd.twitchtv.v5+json"}},
+                                    function optionalCallback(err, httpResponse) {
+                                        if (JSON.parse(httpResponse.body)._total === 0) {
+                                            msg.channel.send("No videos recorded");
+                                        } else {
+                                            msg.channel.send("Latest video: " + JSON.parse(httpResponse.body).videos[0].url)
+                                        }
+                                })
                         })
-                    })
+                    }
                 })
             }
         }
