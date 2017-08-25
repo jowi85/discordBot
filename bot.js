@@ -29,7 +29,9 @@ client.on("message", msg => {
         if (msg.content === prefix + "logs") {
             request.get({url: props.logsAPI},
                 function optionalCallback(err, httpResponse) {
-                    console.log(httpResponse);
+                    console.log("logsAPI = " + logsAPI);
+                    console.log("err = " + err);
+                    console.log("httpResponse = " + httpResponse);
                     const logId = JSON.parse(httpResponse.body)[JSON.parse(httpResponse.body).length - 1].id;
                     msg.channel.send("https://www.warcraftlogs.com/reports/" + logId);
             })
