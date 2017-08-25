@@ -27,9 +27,11 @@ client.on("message", msg => {
         }
 
         if (msg.content === prefix + "logs") {
-            request.get({url: props.logsAPI}, function optionalCallback(err, httpResponse) {
-              const logId = JSON.parse(httpResponse.body)[JSON.parse(httpResponse.body).length - 1].id;
-              msg.channel.send("https://www.warcraftlogs.com/reports/" + logId);
+            request.get({url: props.logsAPI},
+                function optionalCallback(err, httpResponse) {
+                    console.log(httpResponse);
+                    const logId = JSON.parse(httpResponse.body)[JSON.parse(httpResponse.body).length - 1].id;
+                    msg.channel.send("https://www.warcraftlogs.com/reports/" + logId);
             })
         }
 
