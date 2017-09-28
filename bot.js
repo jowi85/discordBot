@@ -17,7 +17,8 @@ client.on("message", msg => {
 
     if (msg.content.match(/^![^!]*!/g)) {
         msg.channel.send("Stop trying to break me, Ned :P");
-
+    } else if (msg.member === "Dave" && msg.content.match(/^![^!]*/g)) {
+        msg.channel.send("I'm sorry, Dave.  I'm afraid I can't do that.")
     } else if (msg.content.match(/^![^!]*/g)) {
 
         if (!msg.content.startsWith(prefix)) return;
