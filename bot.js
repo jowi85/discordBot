@@ -23,7 +23,13 @@ client.on("message", msg => {
         if (!msg.content.startsWith(prefix)) return;
 
         if (msg.content.startsWith(prefix + "help")) {
-            msg.channel.send("Use tellme {realm} {character} to get character info or pricecheck for AH info");
+            msg.channel.send("Things I can do! \n" +
+                             prefix + "tellme {realm} {character} for basic character info \n" +
+                             prefix + "pricecheck {itemName} for AH info \n" +
+                             prefix + "logs for our WarcraftLogs \n" +
+                             prefix + "spreadsheet for detailed guild character info \n" +
+                             prefix + "twitch {channelName} for a link to the twitch user \n" +
+                             prefix + "avatar to get our graphic on where to stand for Fallen Avatar");
         }
 
         if (msg.content === prefix + "logs") {
@@ -32,6 +38,14 @@ client.on("message", msg => {
                     const logId = JSON.parse(httpResponse.body)[JSON.parse(httpResponse.body).length - 1].id;
                     msg.channel.send("https://www.warcraftlogs.com/reports/" + logId);
             })
+        }
+
+        if (msg.content === prefix + "spreadsheet") {
+            msg.channel.send("https://wowaudit.com/us/dalaran/forgotten-prophets");
+        }
+
+        if (msg.content === prefix + "avatar") {
+            msg.channel.send("https://cdn.discordapp.com/attachments/231181456108421121/362406645772582912/avatar_assignments3.png");
         }
 
         if (msg.content.startsWith(prefix + "twitch")) {
@@ -66,10 +80,6 @@ client.on("message", msg => {
                     }
                 })
             }
-        }
-
-        if (msg.content === prefix + "spreadsheet") {
-            msg.channel.send("https://wowaudit.com/us/dalaran/forgotten-prophets");
         }
 
         if (msg.content.startsWith(prefix + "tellme")) {
