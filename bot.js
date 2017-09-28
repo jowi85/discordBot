@@ -17,7 +17,7 @@ client.on("message", msg => {
 
     if (msg.content.match(/^![^!]*!/g)) {
         msg.channel.send("Stop trying to break me, Ned :P");
-    } else if (msg.author === "Dave" && msg.content.match(/^![^!]*/g)) {
+    } else if (msg.author.username === "Dave" && msg.content.match(/^![^!]*/g)) {
         msg.channel.send("I'm sorry, Dave.  I'm afraid I can't do that.")
     } else if (msg.content.match(/^![^!]*/g)) {
 
