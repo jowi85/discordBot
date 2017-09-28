@@ -23,13 +23,13 @@ client.on("message", msg => {
         if (!msg.content.startsWith(prefix)) return;
 
         if (msg.content.startsWith(prefix + "help")) {
-            msg.channel.send("Things I can do! \n" +
-                             prefix + "tellme {realm} {character} for basic character info \n" +
-                             prefix + "pricecheck {itemName} for AH info \n" +
-                             prefix + "logs for our WarcraftLogs \n" +
-                             prefix + "spreadsheet for detailed guild character info \n" +
-                             prefix + "twitch {channelName} for a link to the twitch user \n" +
-                             prefix + "avatar to get our graphic on where to stand for Fallen Avatar");
+            msg.channel.send("Things I can do: \n\n" +
+                             prefix + "tellme {realm} {character} \n" +
+                             prefix + "pricecheck {itemName} \n" +
+                             prefix + "logs \n" +
+                             prefix + "spreadsheet \n" +
+                             prefix + "twitch {channelName} \n" +
+                             prefix + "avatar");
         }
 
         if (msg.content === prefix + "logs") {
