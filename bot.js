@@ -17,6 +17,7 @@ client.on("message", msg => {
 
     if (msg.content.match(/^![^!]*!/g)) {
         msg.channel.send("Stop trying to break me, Ned :P");
+
     } else if (msg.content.match(/^![^!]*/g)) {
 
         if (!msg.content.startsWith(prefix)) return;
@@ -82,8 +83,9 @@ client.on("message", msg => {
         }
 
         if (msg.content.startsWith(prefix + "tellme")) {
+            const channel = msg.guild.channels.find('name', 'raidbots');
             if (splitMessage(msg.content) === undefined) {
-                msg.channel.send("You have to provide a realm and character name");
+                channel.send("You have to provide a realm and character name");
             } else {
                 const ilvlApiFill = apiFill(props.ilvlApi, splitMessage(msg.content)[0], splitMessage(msg.content)[1], "");
                 const statsApiFill = apiFill(props.statsApi, splitMessage(msg.content)[0], splitMessage(msg.content)[1], "");
@@ -92,7 +94,7 @@ client.on("message", msg => {
                 //first request for basic class and ilvl information
                 request.get({url: ilvlApiFill}, function optionalCallback(err, httpResponse) {
                     if (httpResponse.statusCode === 404 && JSON.parse(httpResponse.body).reason) {
-                        msg.channel.send(JSON.parse(httpResponse.body).reason);
+                        channel.send(JSON.parse(httpResponse.body).reason);
                     } else if (httpResponse.statusCode === 200) {
                         //iterate through and find legendary items, put them in arrays
                         const ilvlApiFillRes = JSON.parse(httpResponse.body);
@@ -111,34 +113,34 @@ client.on("message", msg => {
                         legendarySlot = arr3.filter(function (e) {return e});
 
                         character = splitMessage(msg.content)[1];
-                        msg.channel.send(character[0].toUpperCase() +
+                        channel.send(character[0].toUpperCase() +
                             character.substring(1) + " - " + props.specNames[ilvlApiFillRes.items.mainHand.name] + " " + props.classNames[ilvlApiFillRes.class - 1] +
                             " (" + ilvlApiFillRes.items.averageItemLevel + "/" + ilvlApiFillRes.items.averageItemLevelEquipped + " equipped)");
-                        msg.channel.send("*** Artifact Weapon *** - " +
+                        channel.send("*** Artifact Weapon *** - " +
                             ilvlApiFillRes.items.mainHand.name + " (" + ilvlApiFillRes.items.mainHand.itemLevel + ")");
 
                         //next request for stats
                         request.get({url: statsApiFill}, function optionalCallback(err, httpResponse) {
-                            msg.channel.send(statsMessage(JSON.parse(httpResponse.body)));
+                            channel.send(statsMessage(JSON.parse(httpResponse.body)));
                             //finally request for legendary item descriptions, if available
                             if (legendaryNames.length === 0) {
-                                msg.channel.send("***No legendaries :(***");
+                                channel.send("***No legendaries :(***");
                             } else if (legendaryNames.length === 1) {
                                 const itemApiFill = apiFill(props.itemApi, "", "", legendaryIds[0]);
                                 request.get({url: itemApiFill}, function optionalCallback(err, httpResponse) {
                                     const itemApiFillRes = JSON.parse(httpResponse.body);
-                                    msg.channel.send("***Legendary*** - " + legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillRes.itemSpells[0].spell.description);
+                                    channel.send("***Legendary*** - " + legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillRes.itemSpells[0].spell.description);
                                 });
                             } else if (legendaryNames.length === 2) {
                                 const itemApiFill = apiFill(props.itemApi, "", "", legendaryIds[0]);
                                 request.get({url: itemApiFill}, function optionalCallback(err, httpResponse) {
                                     const itemApiFillRes = JSON.parse(httpResponse.body);
-                                    msg.channel.send("***Legendary*** - " + legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillRes.itemSpells[0].spell.description);
+                                    channel.send("***Legendary*** - " + legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillRes.itemSpells[0].spell.description);
                                 });
                                 const itemApiFill2 = apiFill(props.itemApi, "", "", legendaryIds[1]);
                                 request.get({url: itemApiFill2}, function optionalCallback(err, httpResponse) {
                                     const itemApiFillRes2 = JSON.parse(httpResponse.body);
-                                    msg.channel.send("***Legendary*** - " + legendaryNames[1] + " (" + legendarySlot[1] + ") - " + itemApiFillRes2.itemSpells[0].spell.description)
+                                    channel.send("***Legendary*** - " + legendaryNames[1] + " (" + legendarySlot[1] + ") - " + itemApiFillRes2.itemSpells[0].spell.description)
                                 });
                             }
                         });
