@@ -32,7 +32,8 @@ client.on("message", msg =>  {
                                  prefix + "logs \n" +
                                  prefix + "spreadsheet \n" +
                                  prefix + "twitch {channelName} \n" +
-                                 prefix + "avatar");
+                                 prefix + "avatar \n" +
+                                 prefix + "argus");
             }
 
             if (msg.content === prefix + "logs") {
