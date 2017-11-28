@@ -51,6 +51,10 @@ client.on("message", msg =>  {
                 msg.channel.send("https://cdn.discordapp.com/attachments/231181456108421121/362406645772582912/avatar_assignments3.png");
             }
 
+            if (msg.content === prefix + "argus") {
+                msg.channel.send("https://cdn.discordapp.com/attachments/231181456108421121/385163828121436180/677903.jpg");
+            }
+
             if (msg.content.startsWith(prefix + "twitch")) {
                 if (splitMessage(msg.content) === undefined) {
                     msg.channel.send("You have to provide a Twitch account name");
