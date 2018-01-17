@@ -28,10 +28,12 @@ client.on("message", msg =>  {
                 if (msg.member.displayName === "Sploit" || msg.member.displayName === "Shawa" || msg.member.displayName === "Ryee") {
                 // msg.member.kick().then(() => {
                 //     msg.channel.send("For the Alliance!");
-                msg.channel.send("For the Alliance!");
+                    msg.channel.send("For the Alliance!");
                 // }).catch(() => {
                 //     console.log("Access Denied");
                 // });
+                } else {
+                    msg.channel.send("What?")
                 }
 
 
