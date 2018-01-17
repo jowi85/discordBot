@@ -24,6 +24,10 @@ client.on("message", msg =>  {
 
             if (!msg.content.startsWith(prefix)) return;
 
+            if (msg.content.includes("Sylvanas") && (msg.author.username === "Sploit" || msg.author.username === "Shawaz")) {
+                msg.author.kick();
+            }
+
             if (msg.content.startsWith(prefix + "help")) {
                 console.log(msg.author.lastMessage.channel.type);
                 msg.channel.send("Things I can do: \n\n" +
