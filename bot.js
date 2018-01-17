@@ -16,7 +16,7 @@ client.on("message", msg =>  {
     const prefix = "!";
 
     if (msg.content.match(/^![^!]*!/g)) {
-        msg.channel.send("Stop trying to break me, Ned :P");
+        msg.channel.send("Stop trying to break me, " + msg.member.displayName +  " :P");
 
     } else if (msg.content.toLowerCase().includes("sylvanas")) {
         if (msg.member.displayName === "Sploit" || msg.member.displayName === "Shawa" || msg.member.displayName === "Ryee") {
@@ -44,6 +44,8 @@ client.on("message", msg =>  {
                                  prefix + "avatar \n" +
                                  prefix + "argus");
             }
+
+            if (msg.content.startsWith(prefix + ""))
 
             if (msg.content === prefix + "logs") {
                 request.get({url: props.logsAPI},
