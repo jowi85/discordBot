@@ -24,7 +24,7 @@ client.on("message", msg =>  {
 
             if (!msg.content.startsWith(prefix)) return;
 
-            if (msg.content.toLowerCase.includes("Sylvanas") && (msg.author.name === "Sploit" || msg.author.name === "Shawaz" || msg.author.name === "Ryee")) {
+            if (msg.content.toLowerCase.includes("sylvanas") && (msg.author.name === "Sploit" || msg.author.name === "Shawaz" || msg.author.name === "Ryee")) {
                 msg.author.kick();
             }
 
