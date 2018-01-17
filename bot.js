@@ -18,7 +18,7 @@ client.on("message", msg =>  {
     if (msg.content.match(/^![^!]*!/g)) {
         msg.channel.send("Stop trying to break me, Ned :P");
 
-    } else if (msg.content.toLowerCase.includes("sylvanas")) {
+    } else if (msg.content.toLowerCase().includes("sylvanas")) {
         console.log("You said her name!");
         if (msg.member.displayName === "Sploit" || msg.member.displayName === "Shawa" || msg.member.displayName === "Ryee") {
             // msg.member.kick().then(() => {
@@ -32,7 +32,7 @@ client.on("message", msg =>  {
             console.log("Nope");
             msg.channel.send("What?")
         }
-        
+
     } else if (msg.content.match(/^![^!]*/g)) {
 
         try {
