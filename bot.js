@@ -19,12 +19,14 @@ client.on("message", msg =>  {
         msg.channel.send("Stop trying to break me, " + msg.member.displayName +  " :P");
 
     } else if (msg.content.toLowerCase().includes("sylvanas")) {
-        if (msg.member.displayName === "Sploit" || msg.member.displayName === "Shawa" || msg.member.displayName === "Ryee") {
-            msg.member.kick().then(() => {
-                msg.channel.send("For the Alliance!");
-            }).catch(() => {
-                console.log("Access Denied");
-            });
+        for (let i = 0; i <= msg.member.roles.array().length - 1; i++) {
+            if (msg.member.roles.array()[i].name === "Traitor") {
+                msg.member.kick().then(() => {
+                    msg.channel.send("For the Alliance!");
+                }).catch(() => {
+                    console.log("Access Denied");
+                });
+            }
         }
 
     } else if (msg.content.match(/^![^!]*/g)) {
@@ -33,12 +35,7 @@ client.on("message", msg =>  {
 
             if (!msg.content.startsWith(prefix)) return;
 
-            if (msg.content.startsWith(prefix) + "testroles") {
-                console.log(msg.member.roles)
-            }
-
             if (msg.content.startsWith(prefix + "help")) {
-                console.log(msg.author.lastMessage.channel.type);
                 msg.channel.send("Things I can do: \n\n" +
                                  prefix + "tellme {realm} {character} \n" +
                                  prefix + "pricecheck {itemName} \n" +
@@ -114,8 +111,7 @@ client.on("message", msg =>  {
                 } else {
                     replyLocation = msg.guild.channels.find('name', 'raidbots')
                 }
-                // const channel = msg.guild.channels.find('name', 'raidbots');
-                // console.log(msg.author);
+
                 if (splitMessage(msg.content) === undefined) {
                     replyLocation.send("You have to provide a realm and character name");
                 } else {
