@@ -25,8 +25,8 @@ client.on("message", msg =>  {
             if (!msg.content.startsWith(prefix)) return;
 
             if (msg.content.toLowerCase.includes("sylvanas") && (msg.member.nickname === "Sploit" || msg.member.nickname === "Shawaz" || msg.member.nickname === "Ryee")) {
-                msg.member.kick().then((member) => {
-                    message.channel.send("For the Alliance!");
+                msg.member.kick().then(() => {
+                    msg.channel.send("For the Alliance!");
                 }).catch(() => {
                     console.log("Access Denied");
                 });
