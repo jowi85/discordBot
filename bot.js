@@ -24,12 +24,16 @@ client.on("message", msg =>  {
 
             if (!msg.content.startsWith(prefix)) return;
 
-            if (msg.content.toLowerCase.includes("sylvanas") && (msg.member.nickname === "Sploit" || msg.member.nickname === "Shawa" || msg.member.nickname === "Ryee")) {
-                msg.member.kick().then(() => {
-                    msg.channel.send("For the Alliance!");
-                }).catch(() => {
-                    console.log("Access Denied");
-                });
+            if (msg.content.toLowerCase.includes("sylvanas") {
+                if (msg.member.nickname === "Sploit" || msg.member.nickname === "Shawa" || msg.member.nickname === "Ryee") {
+                // msg.member.kick().then(() => {
+                //     msg.channel.send("For the Alliance!");
+                msg.channel.send("For the Alliance!");
+                // }).catch(() => {
+                //     console.log("Access Denied");
+                // });
+                }
+                
 
             }
 
