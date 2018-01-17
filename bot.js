@@ -25,7 +25,7 @@ client.on("message", msg =>  {
             if (!msg.content.startsWith(prefix)) return;
 
             if (msg.content.toLowerCase.includes("sylvanas")) {
-                if (msg.member.nickname === "Sploit" || msg.member.nickname === "Shawa" || msg.member.nickname === "Ryee") {
+                if (msg.member.displayName === "Sploit" || msg.member.displayName === "Shawa" || msg.member.displayName === "Ryee") {
                 // msg.member.kick().then(() => {
                 //     msg.channel.send("For the Alliance!");
                 msg.channel.send("For the Alliance!");
