@@ -19,18 +19,12 @@ client.on("message", msg =>  {
         msg.channel.send("Stop trying to break me, Ned :P");
 
     } else if (msg.content.toLowerCase().includes("sylvanas")) {
-        console.log("You said her name!");
         if (msg.member.displayName === "Sploit" || msg.member.displayName === "Shawa" || msg.member.displayName === "Ryee") {
-            // msg.member.kick().then(() => {
-            //     msg.channel.send("For the Alliance!");
-            console.log("But did I capture who said it?");
-            msg.channel.send("For the Alliance!");
-            // }).catch(() => {
-            //     console.log("Access Denied");
-            // });
-        } else {
-            console.log("Nope");
-            msg.channel.send("What?")
+            msg.member.kick().then(() => {
+                msg.channel.send("For the Alliance!");
+            }).catch(() => {
+                console.log("Access Denied");
+            });
         }
 
     } else if (msg.content.match(/^![^!]*/g)) {
