@@ -12,6 +12,16 @@ client.on('ready', () => {
 
 client.login(props.botUserToken);
 
+client.on("guildMemberUpdate", member => {
+   if (member.displayName.toLowerCase().includes("sylvanas")) {
+       member.kick().then(() => {
+           member.channel.send("For the Alliance");
+       }).catch(() => {
+           console.log("Access Denied");
+       });
+   }
+});
+
 client.on("message", msg =>  {
     const prefix = "!";
 
