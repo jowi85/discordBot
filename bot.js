@@ -12,10 +12,10 @@ client.on('ready', () => {
 
 client.login(props.botUserToken);
 
-client.on("guildMemberUpdate", newMember => {
+client.on("guildMemberUpdate", (oldMember, newMember) => {
    if (newMember.displayName.toLowerCase().includes("sylvanas")) {
        newMember.kick().then(() => {
-           newMember.channel.send("For the Alliance");
+           newMember.guild.defaultChannel.send("For the Alliance");
        }).catch(() => {
            console.log("Access Denied");
        });
