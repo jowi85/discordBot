@@ -286,12 +286,10 @@ function scanAndBan () {
     for (let i = 0; i <= guildMemberObject.length - 1; i++) {
         if (guildMemberObject[i].nickname !== null) {
             if (guildMemberObject[i].nickname.toLowerCase().includes("sylvanas") ||
-                guildMemberObject[i].nickname.toLowerCase().includes("windRunner") ||
+                guildMemberObject[i].nickname.toLowerCase().includes("windrunner") ||
                 guildMemberObject[i].nickname.toLowerCase().includes("salvanas") ||
                 guildMemberObject[i].nickname.toLowerCase().includes("wundrinner") ||
-                guildMemberObject[i].nickname.toLowerCase().includes("sylvanos") ||
-                guildMemberObject[i].nickname.toLowerCase().includes("ylv") ||
-                guildMemberObject[i].nickname.toLowerCase().includes("llyv")
+                guildMemberObject[i].nickname.toLowerCase().includes("sylvanos")
             )
             {
                 guildMemberObject[i].kick().then(() => {
@@ -304,5 +302,4 @@ function scanAndBan () {
             }
         }
     }
-
 }
