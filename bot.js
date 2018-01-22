@@ -299,11 +299,13 @@ function scanAndBan () {
                 guildMemberObject[i].nickname.toLowerCase().includes("windRunner") ||
                 guildMemberObject[i].nickname.toLowerCase().includes("salvanas") ||
                 guildMemberObject[i].nickname.toLowerCase().includes("wundrinner") ||
-                guildMemberObject[i].nickname.toLowerCase().includes("sylvanos"))
+                guildMemberObject[i].nickname.toLowerCase().includes("sylvanos") ||
+                guildMemberObject[i].nickname.toLowerCase().includes("ylv")
+            )
             {
                 guildMemberObject[i].kick().then(() => {
                     console.log("So long, " + guildMemberObject[i].user.username + "!  For the Alliance!");
-                    guildMemberObject[i].guild.defaultChannel.send("So long, " + guildMemberObject[i].user.username + "!  For the Alliance!");
+                    guildMemberObject[i].guild.defaultChannel.send("So long, " + guildMemberObject[i].user.username + " aka + " + guildMemberObject[i].nickname + "!  For the Alliance!");
                 }).catch(() => {
                    console.log("Access Denied");
                 });
