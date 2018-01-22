@@ -14,16 +14,6 @@ client.setInterval(scanAndBan, 3000);
 
 client.login(props.botUserToken);
 
-client.on("guildMemberUpdate", (oldMember, newMember) => {
-   if (newMember.displayName.toLowerCase().includes("sylvanas")) {
-       newMember.kick().then(() => {
-           newMember.guild.defaultChannel.send("For the Alliance");
-       }).catch(() => {
-           console.log("Access Denied");
-       });
-   }
-});
-
 client.on("message", msg =>  {
     const prefix = "!";
 
