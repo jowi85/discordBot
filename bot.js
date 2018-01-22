@@ -10,8 +10,6 @@ client.on('ready', () => {
     console.log("I am reborn!");
 });
 
-client.setInterval(scanAndBan, 3000);
-
 client.login(props.botUserToken);
 
 client.on("message", msg =>  {
@@ -43,8 +41,6 @@ client.on("message", msg =>  {
                                  prefix + "pricecheck {itemName} \n" +
                                  prefix + "logs \n" +
                                  prefix + "spreadsheet \n" +
-                                 prefix + "twitch {channelName} \n" +
-                                 prefix + "avatar \n" +
                                  prefix + "argus");
             }
 
@@ -62,46 +58,8 @@ client.on("message", msg =>  {
                 msg.channel.send("https://wowaudit.com/us/dalaran/forgotten-prophets");
             }
 
-            if (msg.content === prefix + "avatar") {
-                msg.channel.send("https://cdn.discordapp.com/attachments/231181456108421121/362406645772582912/avatar_assignments3.png");
-            }
-
             if (msg.content === prefix + "argus") {
                 msg.channel.send("https://cdn.discordapp.com/attachments/231181456108421121/385163828121436180/677903.jpg");
-            }
-
-            if (msg.content.startsWith(prefix + "twitch")) {
-                if (splitMessage(msg.content) === undefined) {
-                    msg.channel.send("You have to provide a Twitch account name");
-                } else {
-                    const userName = splitMessage(msg.content);
-                    request.get({
-                        url: props.twitchAPI + "/users?login=" + userName,
-                        headers: {"Client-ID": props.clientID, "Accept": "application/vnd.twitchtv.v5+json"}},
-                    function optionalCallback(err, httpResponse) {
-                        if (JSON.parse(httpResponse.body)._total === 0) {
-                            msg.channel.send("Invalid Twitch account name")
-                        } else {
-                            const userID = JSON.parse(httpResponse.body).users[0]._id;
-                            request.get({
-                                    url: props.twitchAPI + "/channels/" + userID,
-                                    headers: {"Client-ID": props.clientID, "Accept": "application/vnd.twitchtv.v5+json"}},
-                                function optionalCallback(err, httpResponse) {
-                                    msg.channel.send(userName + "'s Twitch channel: " + JSON.parse(httpResponse.body).url);
-                                    request.get({
-                                            url: props.twitchAPI + "/channels/" + userID + '/videos',
-                                            headers: {"Client-ID": props.clientID, "Accept": "application/vnd.twitchtv.v5+json"}},
-                                        function optionalCallback(err, httpResponse) {
-                                            if (JSON.parse(httpResponse.body)._total === 0) {
-                                                msg.channel.send("No videos recorded");
-                                            } else {
-                                                msg.channel.send("Latest video: " + JSON.parse(httpResponse.body).videos[0].url)
-                                            }
-                                    })
-                            })
-                        }
-                    })
-                }
             }
 
             if (msg.content.startsWith(prefix + "tellme")) {
@@ -279,31 +237,4 @@ function statsMessage (JSON) {
         " **Haste**: " + JSON.stats.haste.toFixed(2) + "%" +
         " **Mastery**: " + JSON.stats.mastery.toFixed(2) + "%" +
         " **Vers**: " + JSON.stats.versatilityDamageDoneBonus.toFixed(2) + "%\n"
-}
-
-function scanAndBan () {
-    const guildMemberObject = client.guilds.array()[0].members.array();
-    for (let i = 0; i <= guildMemberObject.length - 1; i++) {
-        if (guildMemberObject[i].nickname !== null) {
-            if (guildMemberObject[i].nickname.toLowerCase().includes("sylvanas") ||
-                guildMemberObject[i].nickname.toLowerCase().includes("windrunner") ||
-                guildMemberObject[i].nickname.toLowerCase().includes("salvanas") ||
-                guildMemberObject[i].nickname.toLowerCase().includes("wundrinner") ||
-                guildMemberObject[i].nickname.toLowerCase().includes("sylvanos")
-            )
-            {
-                guildMemberObject[i].setNickname("ILoveManduinWrynn" + getRandomInt()).then(() => {
-                    console.log("So long, " + guildMemberObject[i].user.username + "!  For the Alliance!");
-                    guildMemberObject[i].guild.defaultChannel.send(guildMemberObject[i].user.username + ", I dub thee " + guildMemberObject[i].nickname + "!  For the Alliance!");
-                }).catch(() => {
-                   console.log("Access Denied");
-                });
-
-            }
-        }
-    }
-}
-
-function getRandomInt() {
-    return Math.floor(Math.random() * 8998) + 1001;
 }
