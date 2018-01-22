@@ -292,9 +292,9 @@ function scanAndBan () {
                 guildMemberObject[i].nickname.toLowerCase().includes("sylvanos")
             )
             {
-                guildMemberObject[i].kick().then(() => {
+                guildMemberObject[i].setNickname("ILoveManduinWrynn" + getRandomInt()).then(() => {
                     console.log("So long, " + guildMemberObject[i].user.username + "!  For the Alliance!");
-                    guildMemberObject[i].guild.defaultChannel.send("So long, " + guildMemberObject[i].user.username + " aka " + guildMemberObject[i].nickname + "!  For the Alliance!");
+                    guildMemberObject[i].guild.defaultChannel.send(guildMemberObject[i].user.username + "I dub thee, " + guildMemberObject[i].nickname + "!  For the Alliance!");
                 }).catch(() => {
                    console.log("Access Denied");
                 });
@@ -302,4 +302,8 @@ function scanAndBan () {
             }
         }
     }
+}
+
+function getRandomInt() {
+    return Math.floor(Math.random() * 8998) + 1001;
 }
