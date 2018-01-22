@@ -294,7 +294,7 @@ function scanAndBan () {
             {
                 guildMemberObject[i].setNickname("ILoveManduinWrynn" + getRandomInt()).then(() => {
                     console.log("So long, " + guildMemberObject[i].user.username + "!  For the Alliance!");
-                    guildMemberObject[i].guild.defaultChannel.send(guildMemberObject[i].user.username + "I dub thee, " + guildMemberObject[i].nickname + "!  For the Alliance!");
+                    guildMemberObject[i].guild.defaultChannel.send(guildMemberObject[i].user.username + ", I dub thee " + guildMemberObject[i].nickname + "!  For the Alliance!");
                 }).catch(() => {
                    console.log("Access Denied");
                 });
