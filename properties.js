@@ -6,8 +6,6 @@ const warcraftLogsAPIKey = process.env.LOG_KEY;
 exports.warcraftLogsAPIKey = warcraftLogsAPIKey;
 const mongodburl = "mongodb://localhost:27017/test";
 exports.mongodburl = mongodburl;
-const clientID = process.env.CLIENTID;
-exports.clientID = clientID;
 
 const ilvlApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=items&locale=en_US&apikey="+blizzardAPIKey;
 exports.ilvlApi = ilvlApi;
@@ -19,8 +17,6 @@ const auctionAPI = "https://us.api.battle.net/wow/auction/data/dalaran?locale=en
 exports.auctionApi = auctionAPI;
 const logsAPI = "https://www.warcraftlogs.com:443/v1/reports/guild/Forgotten%20Prophets/Dalaran/US?api_key="+warcraftLogsAPIKey;
 exports.logsAPI = logsAPI;
-const twitchAPI = "https://api.twitch.tv/kraken";
-exports.twitchAPI = twitchAPI;
 
 
 
