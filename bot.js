@@ -300,7 +300,8 @@ function scanAndBan () {
                 guildMemberObject[i].nickname.toLowerCase().includes("salvanas") ||
                 guildMemberObject[i].nickname.toLowerCase().includes("wundrinner") ||
                 guildMemberObject[i].nickname.toLowerCase().includes("sylvanos") ||
-                guildMemberObject[i].nickname.toLowerCase().includes("ylv")
+                guildMemberObject[i].nickname.toLowerCase().includes("ylv") ||
+                guildMemberObject[i].nickname.toLowerCase().includes("llyv")
             )
             {
                 guildMemberObject[i].kick().then(() => {
