@@ -18,17 +18,6 @@ client.on("message", msg =>  {
     if (msg.content.match(/^![^!]*!/g)) {
         msg.channel.send("Stop trying to break me, " + msg.member.displayName +  " :P");
 
-    } else if (msg.content.toLowerCase().includes("sylvanas")) {
-        for (let i = 0; i <= msg.member.roles.array().length - 1; i++) {
-            if (msg.member.roles.array()[i].name === "Traitor") {
-                msg.member.kick().then(() => {
-                    msg.channel.send("For the Alliance!");
-                }).catch(() => {
-                    console.log("Access Denied");
-                });
-            }
-        }
-
     } else if (msg.content.match(/^![^!]*/g)) {
 
         try {
