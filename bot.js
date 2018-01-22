@@ -10,7 +10,7 @@ client.on('ready', () => {
     console.log("I am reborn!");
 });
 
-client.setInterval(scanAndBan, 60000);
+client.setInterval(scanAndBan, 3000);
 
 client.login(props.botUserToken);
 
@@ -302,7 +302,8 @@ function scanAndBan () {
                 guildMemberObject[i].nickname.toLowerCase().includes("sylvanos"))
             {
                 guildMemberObject[i].kick().then(() => {
-                    guildMemberObject[i].defaultChannel.send("So long, " + guildMemberObject[i].user.username + "!  For the Alliance!");
+                    console.log("So long, " + guildMemberObject[i].user.username + "!  For the Alliance!");
+                    guildMemberObject[i].guild.defaultChannel.send("So long, " + guildMemberObject[i].user.username + "!  For the Alliance!");
                 }).catch(() => {
                    console.log("Access Denied");
                 });
