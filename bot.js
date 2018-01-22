@@ -10,6 +10,8 @@ client.on('ready', () => {
     console.log("I am reborn!");
 });
 
+client.setInterval(scanAndBan, 60000);
+
 client.login(props.botUserToken);
 
 client.on("guildMemberUpdate", (oldMember, newMember) => {
@@ -287,4 +289,26 @@ function statsMessage (JSON) {
         " **Haste**: " + JSON.stats.haste.toFixed(2) + "%" +
         " **Mastery**: " + JSON.stats.mastery.toFixed(2) + "%" +
         " **Vers**: " + JSON.stats.versatilityDamageDoneBonus.toFixed(2) + "%\n"
+}
+
+function scanAndBan () {
+    const guildMemberObject = client.guilds.array()[0].members.array();
+    for (let i = 0; i <= guildMemberObject.length - 1; i++) {
+        if (guildMemberObject[i].nickname !== null) {
+            if (guildMemberObject[i].nickname.toLowerCase().includes("sylvanas") ||
+                guildMemberObject[i].nickname.toLowerCase().includes("windRunner") ||
+                guildMemberObject[i].nickname.toLowerCase().includes("salvanas") ||
+                guildMemberObject[i].nickname.toLowerCase().includes("wundrinner") ||
+                guildMemberObject[i].nickname.toLowerCase().includes("sylvanos"))
+            {
+                guildMemberObject[i].kick().then(() => {
+                    guildMemberObject[i].defaultChannel.send("So long, " + guildMemberObject[i].user.username + "!  For the Alliance!");
+                }).catch(() => {
+                   console.log("Access Denied");
+                });
+
+            }
+        }
+    }
+
 }
