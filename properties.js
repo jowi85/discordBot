@@ -15,6 +15,9 @@ const statsApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fi
 exports.statsApi = statsApi;
 const auctionAPI = "https://us.api.battle.net/wow/auction/data/dalaran?locale=en_US&apikey="+blizzardAPIKey;
 exports.auctionApi = auctionAPI;
+const progressAPI = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=progression&locale=en_US&apikey="+blizzardAPIKey;
+exports.progressApi = progressAPI;
+
 const logsAPI = "https://www.warcraftlogs.com:443/v1/reports/guild/Forgotten%20Prophets/Dalaran/US?api_key="+warcraftLogsAPIKey;
 exports.logsAPI = logsAPI;
 
