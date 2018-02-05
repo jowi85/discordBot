@@ -51,6 +51,40 @@ client.on("message", msg =>  {
                 msg.channel.send("https://cdn.discordapp.com/attachments/231181456108421121/385163828121436180/677903.jpg");
             }
 
+            if (msg.content.startsWith(prefix + "cache")) {
+
+                let start = 0;
+                let number;
+                let newNumber;
+
+                let replyLocation = null;
+
+                if (msg.author.lastMessage.channel.type === 'dm') {
+                    replyLocation = msg.author;
+                } else {
+                    replyLocation = msg.guild.channels.find('name', 'raidbots')
+                }
+
+                const progressApiFill = apiFill(props.progressApi, splitMessage(msg.content)[0], splitMessage(msg.content)[1], "");
+                request.get({url: progressApiFill}, function optionalCallback(err, httpResponse) {
+                    if (httpResponse.statusCode === 404 && JSON.parse(httpResponse.body).reason) {
+                        replyLocation.send(JSON.parse(httpResponse.body).reason);
+                    } else if (httpResponse.statusCode === 200) {
+                        for (let x = 0; x <= JSON.parse(httpResponse.body).progression.raids[39].bosses.length - 1; x++) {
+                            number = JSON.parse(httpResponse.body).progression.raids[39].bosses[x].mythicKills;
+                            newNumber = start + number;
+                            start = newNumber;
+                        }
+                        if (newNumber >= 13) {
+                            replyLocation.send("You have " + newNumber + " mythic kills -- you get a cache!");
+                        } else {
+                            replyLocation.send("You have " + newNumber + " mythic kills")
+                        }
+                    }
+                });
+            }
+
+
             if (msg.content.startsWith(prefix + "tellme")) {
 
                 let replyLocation = null;
