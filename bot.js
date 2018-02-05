@@ -30,7 +30,8 @@ client.on("message", msg =>  {
                                  prefix + "pricecheck {itemName} \n" +
                                  prefix + "logs \n" +
                                  prefix + "spreadsheet \n" +
-                                 prefix + "argus");
+                                 prefix + "argus \n" +
+                                 prefix + "cache");
             }
 
             if (msg.content.startsWith(prefix + ""))
@@ -76,9 +77,9 @@ client.on("message", msg =>  {
                             start = newNumber;
                         }
                         if (newNumber >= 13) {
-                            replyLocation.send("You have " + newNumber + " mythic kills -- you get a cache!");
+                            replyLocation.send("You have " + newNumber + " mythic kills, " + splitMessage(msg.content)[1] + " -- you get a mythic cache!");
                         } else {
-                            replyLocation.send("You have " + newNumber + " mythic kills")
+                            replyLocation.send("You have " + newNumber + " mythic kills, " + splitMessage(msg.content)[1])
                         }
                     }
                 });
