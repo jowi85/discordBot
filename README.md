@@ -1,7 +1,7 @@
 # discordBot
 
 #### Setup Instructions:
-1) Install _mongodb_ on the machine to run the bot.  
+11) Install _mongodb_ on the machine to run the bot.  
 
     a.  after installed, you'll need to run `mongod` to turn on the db server
     
