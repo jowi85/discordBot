@@ -8,6 +8,8 @@ const props = require('./properties');
 // const keys = require('./keys');
 const keys = require('/home/jenkins/keys.js');
 
+console.log(process.env);
+
 client.on('ready', () => {
     console.log("I am reborn!");
 });
