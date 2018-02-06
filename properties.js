@@ -1,28 +1,21 @@
-const botUserToken = process.env.BOT_TOKEN;
-exports.botUserToken = botUserToken;
-const blizzardAPIKey = process.env.API_KEY;
-exports.blizzardAPIKey = blizzardAPIKey;
-const warcraftLogsAPIKey = process.env.LOG_KEY;
-exports.warcraftLogsAPIKey = warcraftLogsAPIKey;
+const keys = require('/home/jenkins/keys.js');
+
 const mongodburl = "mongodb://localhost:27017/test";
 exports.mongodburl = mongodburl;
 
-const ilvlApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=items&locale=en_US&apikey="+blizzardAPIKey;
+const ilvlApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=items&locale=en_US&apikey="+keys.blizzardAPIKey;
 exports.ilvlApi = ilvlApi;
-const itemApi = "https://us.api.battle.net/wow/item/{id}?locale=en_US&apikey="+blizzardAPIKey;
+const itemApi = "https://us.api.battle.net/wow/item/{id}?locale=en_US&apikey="+keys.blizzardAPIKey;
 exports.itemApi = itemApi;
-const statsApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=stats&locale=en_US&apikey="+blizzardAPIKey;
+const statsApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=stats&locale=en_US&apikey="+keys.blizzardAPIKey;
 exports.statsApi = statsApi;
-const auctionAPI = "https://us.api.battle.net/wow/auction/data/dalaran?locale=en_US&apikey="+blizzardAPIKey;
+const auctionAPI = "https://us.api.battle.net/wow/auction/data/dalaran?locale=en_US&apikey="+keys.blizzardAPIKey;
 exports.auctionApi = auctionAPI;
-const progressAPI = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=progression&locale=en_US&apikey="+blizzardAPIKey;
+const progressAPI = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=progression&locale=en_US&apikey="+keys.blizzardAPIKey;
 exports.progressApi = progressAPI;
 
-const logsAPI = "https://www.warcraftlogs.com:443/v1/reports/guild/Forgotten%20Prophets/Dalaran/US?api_key="+warcraftLogsAPIKey;
+const logsAPI = "https://www.warcraftlogs.com:443/v1/reports/guild/Forgotten%20Prophets/Dalaran/US?api_key="+keys.warcraftLogsAPIKey;
 exports.logsAPI = logsAPI;
-
-
-
 
 const classNames = ["Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Death Knight", "Shaman", "Mage", "Warlock", "Monk", "Druid", "Demon Hunter"];
 exports.classNames = classNames;
