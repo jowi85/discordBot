@@ -9,7 +9,7 @@ exports.mongodburl = mongodburl;
 
 const ilvlApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=items&locale=en_US&apikey="+blizzardAPIKey;
 exports.ilvlApi = ilvlApi;
-const itemApi = "https://us.api.battle.net/wow/item/{id}?locale=en_US&apikey="+keys.blizzardAPIKey;
+const itemApi = "https://us.api.battle.net/wow/item/{id}?locale=en_US&apikey="+blizzardAPIKey;
 exports.itemApi = itemApi;
 const statsApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=stats&locale=en_US&apikey="+blizzardAPIKey;
 exports.statsApi = statsApi;
