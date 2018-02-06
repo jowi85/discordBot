@@ -1,5 +1,9 @@
-const keys = require('/home/jenkins/keys.js');
-
+const botUserToken = process.env.BOT_TOKEN;
+exports.botUserToken = botUserToken;
+const blizzardAPIKey = process.env.API_KEY;
+exports.blizzardAPIKey = blizzardAPIKey;
+const warcraftLogsAPIKey = process.env.LOG_KEY;
+exports.warcraftLogsAPIKey = warcraftLogsAPIKey;
 const mongodburl = "mongodb://localhost:27017/test";
 exports.mongodburl = mongodburl;
 
