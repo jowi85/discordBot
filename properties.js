@@ -7,18 +7,18 @@ exports.warcraftLogsAPIKey = warcraftLogsAPIKey;
 const mongodburl = "mongodb://localhost:27017/test";
 exports.mongodburl = mongodburl;
 
-const ilvlApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=items&locale=en_US&apikey="+keys.blizzardAPIKey;
+const ilvlApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=items&locale=en_US&apikey="+blizzardAPIKey;
 exports.ilvlApi = ilvlApi;
 const itemApi = "https://us.api.battle.net/wow/item/{id}?locale=en_US&apikey="+keys.blizzardAPIKey;
 exports.itemApi = itemApi;
-const statsApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=stats&locale=en_US&apikey="+keys.blizzardAPIKey;
+const statsApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=stats&locale=en_US&apikey="+blizzardAPIKey;
 exports.statsApi = statsApi;
-const auctionAPI = "https://us.api.battle.net/wow/auction/data/dalaran?locale=en_US&apikey="+keys.blizzardAPIKey;
+const auctionAPI = "https://us.api.battle.net/wow/auction/data/dalaran?locale=en_US&apikey="+blizzardAPIKey;
 exports.auctionApi = auctionAPI;
-const progressAPI = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=progression&locale=en_US&apikey="+keys.blizzardAPIKey;
+const progressAPI = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=progression&locale=en_US&apikey="+blizzardAPIKey;
 exports.progressApi = progressAPI;
 
-const logsAPI = "https://www.warcraftlogs.com:443/v1/reports/guild/Forgotten%20Prophets/Dalaran/US?api_key="+keys.warcraftLogsAPIKey;
+const logsAPI = "https://www.warcraftlogs.com:443/v1/reports/guild/Forgotten%20Prophets/Dalaran/US?api_key="+warcraftLogsAPIKey;
 exports.logsAPI = logsAPI;
 
 const classNames = ["Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Death Knight", "Shaman", "Mage", "Warlock", "Monk", "Druid", "Demon Hunter"];
