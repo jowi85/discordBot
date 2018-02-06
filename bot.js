@@ -4,12 +4,8 @@ const request = require("request");
 const MongoClient = require('mongodb').MongoClient;
 const streamToMongoDB = require("stream-to-mongo-db").streamToMongoDB;
 const JSONStream = require("JSONStream");
+// const props = require('./properties');
 const props = require('/home/jenkins/properties.js');
-
-console.log(process.env);
-console.log(props.classNames);
-console.log(process.env.BOT_TOKEN);
-console.log(props.botUserToken);
 
 client.on('ready', () => {
     console.log("I am reborn!");
