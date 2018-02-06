@@ -6,6 +6,8 @@ const streamToMongoDB = require("stream-to-mongo-db").streamToMongoDB;
 const JSONStream = require("JSONStream");
 const props = require('./properties');
 
+console.log(props.botUserToken);
+
 client.on('ready', () => {
     console.log("I am reborn!");
 });
