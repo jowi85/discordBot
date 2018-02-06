@@ -27,7 +27,7 @@ client.on("message", msg =>  {
         try {
 
             if(msg.content === prefix + "jenkins") {
-                msg.channel.send("Jenkins seems to be working correctly, I think!!!!!!!!")
+                msg.channel.send("Jenkins seems to be working correctly, I think!!!!!!")
             }
 
             if (!msg.content.startsWith(prefix)) return;
