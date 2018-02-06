@@ -22,4 +22,4 @@
     
     You will have to provide `BOT_TOKEN` (discord), `API_KEY` (wow api), `LOG_KEY` (warcraftlogs) and include them in your startup.
     
-6) The main bot commands are `!tellme server character`, `!pricecheck item`, and `!logs`..
+6) The main bot commands are `!tellme server character`, `!pricecheck item`, and `!logs`.
