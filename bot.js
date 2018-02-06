@@ -4,14 +4,15 @@ const request = require("request");
 const MongoClient = require('mongodb').MongoClient;
 const streamToMongoDB = require("stream-to-mongo-db").streamToMongoDB;
 const JSONStream = require("JSONStream");
-// const props = require('./properties');
-const props = require('/home/jenkins/properties.js');
+const props = require('./properties');
+// const keys = require('./keys');
+const keys = require('/home/jenkins/keys.js');
 
 client.on('ready', () => {
     console.log("I am reborn!");
 });
 
-client.login(props.botUserToken);
+client.login(keys.botUserToken);
 
 client.on("message", msg =>  {
     const prefix = "!";
