@@ -9,6 +9,8 @@ const props = require('./properties');
 const keys = require('/home/jenkins/keys.js');
 
 console.log(process.env);
+console.log(process.env.BUILD_ID);
+console.log(process.env.API_KEY);
 
 client.on('ready', () => {
     console.log("I am reborn!");
