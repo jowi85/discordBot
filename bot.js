@@ -6,6 +6,7 @@ const streamToMongoDB = require("stream-to-mongo-db").streamToMongoDB;
 const JSONStream = require("JSONStream");
 const props = require('./properties');
 
+console.log(process.env);
 console.log(process.env.BOT_TOKEN);
 console.log(props.botUserToken);
 
