@@ -8,6 +8,7 @@ const props = require('./properties');
 
 client.on('ready', () => {
     console.log("I am reborn!");
+    client.guild.defaultChannel.send("Battlecruiser operational.");
 });
 
 client.login(props.botUserToken);
