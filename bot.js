@@ -205,7 +205,7 @@ client.on("message", msg =>  {
             }
 
             if (msg.content.startsWith(prefix + "??loadData")) {
-                MongoClient.connect(props.mongodburl, function(err, db) {
+                MongoClient.connect("mongodb://localhost:27017/test", function(err, db) {
                     db.dropDatabase(function(err, result) {
                        msg.channel.send("Dropped old db, rebuilding...");
                     });
