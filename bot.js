@@ -4,7 +4,7 @@ const request = require("request");
 const MongoClient = require('mongodb').MongoClient;
 const streamToMongoDB = require("stream-to-mongo-db").streamToMongoDB;
 const JSONStream = require("JSONStream");
-const props = require('./properties');
+const keys = require('./keys');
 const vars = require('./variables');
 
 client.on('ready', () => {
@@ -12,7 +12,7 @@ client.on('ready', () => {
     client.guilds.array()[0].defaultChannel.send("Battlecruiser operational.");
 });
 
-client.login(props.BOT_TOKEN);
+client.login(keys.BOT_TOKEN);
 
 client.on("message", msg =>  {
     const prefix = "!";

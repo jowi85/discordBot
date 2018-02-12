@@ -1,14 +1,14 @@
-const props = require('./properties');
+const keys = require('./keys');
 
-const ilvlApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=items&locale=en_US&apikey="+props.API_KEY;
+const ilvlApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=items&locale=en_US&apikey="+keys.API_KEY;
 exports.ilvlApi = ilvlApi;
-const itemApi = "https://us.api.battle.net/wow/item/{id}?locale=en_US&apikey="+props.API_KEY;
+const itemApi = "https://us.api.battle.net/wow/item/{id}?locale=en_US&apikey="+keys.API_KEY;
 exports.itemApi = itemApi;
-const statsApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=stats&locale=en_US&apikey="+props.API_KEY;
+const statsApi = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=stats&locale=en_US&apikey="+keys.API_KEY;
 exports.statsApi = statsApi;
-const auctionAPI = "https://us.api.battle.net/wow/auction/data/dalaran?locale=en_US&apikey="+props.API_KEY;
+const auctionAPI = "https://us.api.battle.net/wow/auction/data/dalaran?locale=en_US&apikey="+keys.API_KEY;
 exports.auctionApi = auctionAPI;
-const progressAPI = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=progression&locale=en_US&apikey="+props.API_KEY;
+const progressAPI = "https://us.api.battle.net/wow/character/{realm}/{character}?fields=progression&locale=en_US&apikey="+keys.API_KEY;
 exports.progressApi = progressAPI;
 
 const wowAudit = "https://wowaudit.com/us/dalaran/forgotten-prophets";
@@ -19,7 +19,7 @@ exports.argusGuide = argusGuide;
 
 const logsURL = "https://www.warcraftlogs.com/reports/";
 exports.logsURL = logsURL;
-const logsAPI = "https://www.warcraftlogs.com:443/v1/reports/guild/Forgotten%20Prophets/Dalaran/US?api_key="+props.LOG_KEY;
+const logsAPI = "https://www.warcraftlogs.com:443/v1/reports/guild/Forgotten%20Prophets/Dalaran/US?api_key="+keys.LOG_KEY;
 exports.logsAPI = logsAPI;
 
 const classNames = ["Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Death Knight", "Shaman", "Mage", "Warlock", "Monk", "Druid", "Demon Hunter"];
