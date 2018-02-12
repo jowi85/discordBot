@@ -5,52 +5,52 @@ const MongoClient = require('mongodb').MongoClient;
 const streamToMongoDB = require("stream-to-mongo-db").streamToMongoDB;
 const JSONStream = require("JSONStream");
 const props = require('./properties');
+const vars = require('./variables');
 
 client.on('ready', () => {
     console.log("I am reborn!");
     client.guilds.array()[0].defaultChannel.send("Battlecruiser operational.");
 });
 
-client.login(props.botUserToken);
+client.login(props.BOT_TOKEN);
 
 client.on("message", msg =>  {
     const prefix = "!";
+    const regExMultipleBangs = /^![^!]*!/g;
+    const regExSingleBang = /^![^!]*/g;
+    const iCantDoThat = "Stop trying to break me!";
+    const thingsICanDo = "Things I can do: \n\n" +
+                          prefix + "tellme {realm} {character} \n" +
+                          prefix + "pricecheck {itemName} \n" +
+                          prefix + "logs \n" +
+                          prefix + "spreadsheet \n" +
+                          prefix + "argus \n" +
+                          prefix + "cache";
 
-    if (msg.content.match(/^![^!]*!/g)) {
-        msg.channel.send("Stop trying to break me, " + msg.member.displayName +  " :P");
-
-    } else if (msg.content.match(/^![^!]*/g)) {
+    if (msg.content.match(regExMultipleBangs)) {
+        msg.channel.send(iCantDoThat);
+    } else if (msg.content.match(regExSingleBang)) {
 
         try {
 
             if (!msg.content.startsWith(prefix)) return;
 
             if (msg.content.startsWith(prefix + "help")) {
-                msg.channel.send("Things I can do: \n\n" +
-                                 prefix + "tellme {realm} {character} \n" +
-                                 prefix + "pricecheck {itemName} \n" +
-                                 prefix + "logs \n" +
-                                 prefix + "spreadsheet \n" +
-                                 prefix + "argus \n" +
-                                 prefix + "cache");
+                msg.channel.send(thingsICanDo);
             }
 
-            if (msg.content.startsWith(prefix + ""))
+            if (msg.content.startsWith(prefix + "spreadsheet")) {
+                msg.channel.send(vars.wowAudit)
+            }
+
+            if (msg.content.startsWith(prefix + "argus")) {
+                msg.channel.send(vars.argusGuide)
+            }
 
             if (msg.content === prefix + "logs") {
-                request.get({url: props.logsAPI},
-                    function optionalCallback(err, httpResponse) {
-                        const logId = JSON.parse(httpResponse.body)[JSON.parse(httpResponse.body).length - 1].id;
-                        msg.channel.send("https://www.warcraftlogs.com/reports/" + logId);
+                request.get({url: vars.logsAPI}, function optionalCallback(err, httpResponse) {
+                    msg.channel.send(vars.logsURL + JSON.parse(httpResponse.body)[JSON.parse(httpResponse.body).length - 1].id);
                 })
-            }
-
-            if (msg.content === prefix + "spreadsheet") {
-                msg.channel.send("https://wowaudit.com/us/dalaran/forgotten-prophets");
-            }
-
-            if (msg.content === prefix + "argus") {
-                msg.channel.send("https://cdn.discordapp.com/attachments/231181456108421121/385163828121436180/677903.jpg");
             }
 
             if (msg.content.startsWith(prefix + "cache")) {
@@ -67,7 +67,7 @@ client.on("message", msg =>  {
                     replyLocation = msg.guild.channels.find('name', 'raidbots')
                 }
 
-                const progressApiFill = apiFill(props.progressApi, splitMessage(msg.content)[0], splitMessage(msg.content)[1], "");
+                const progressApiFill = apiFill(vars.progressApi, splitMessage(msg.content)[0], splitMessage(msg.content)[1], "");
                 request.get({url: progressApiFill}, function optionalCallback(err, httpResponse) {
                     if (httpResponse.statusCode === 404 && JSON.parse(httpResponse.body).reason) {
                         replyLocation.send(JSON.parse(httpResponse.body).reason);
@@ -100,8 +100,8 @@ client.on("message", msg =>  {
                 if (splitMessage(msg.content) === undefined) {
                     replyLocation.send("You have to provide a realm and character name");
                 } else {
-                    const ilvlApiFill = apiFill(props.ilvlApi, splitMessage(msg.content)[0], splitMessage(msg.content)[1], "");
-                    const statsApiFill = apiFill(props.statsApi, splitMessage(msg.content)[0], splitMessage(msg.content)[1], "");
+                    const ilvlApiFill = apiFill(vars.ilvlApi, splitMessage(msg.content)[0], splitMessage(msg.content)[1], "");
+                    const statsApiFill = apiFill(vars.statsApi, splitMessage(msg.content)[0], splitMessage(msg.content)[1], "");
                     let character, legendaryNames, legendaryIds, legendarySlot;
 
                     //first request for basic class and ilvl information
@@ -127,7 +127,7 @@ client.on("message", msg =>  {
 
                             character = splitMessage(msg.content)[1];
                             replyLocation.send(character[0].toUpperCase() +
-                                character.substring(1) + " - " + props.specNames[ilvlApiFillRes.items.mainHand.name] + " " + props.classNames[ilvlApiFillRes.class - 1] +
+                                character.substring(1) + " - " + vars.specNames[ilvlApiFillRes.items.mainHand.name] + " " + vars.classNames[ilvlApiFillRes.class - 1] +
                                 " (" + ilvlApiFillRes.items.averageItemLevel + "/" + ilvlApiFillRes.items.averageItemLevelEquipped + " equipped)");
                             replyLocation.send("*** Artifact Weapon *** - " +
                                 ilvlApiFillRes.items.mainHand.name + " (" + ilvlApiFillRes.items.mainHand.itemLevel + ")");
@@ -139,18 +139,18 @@ client.on("message", msg =>  {
                                 if (legendaryNames.length === 0) {
                                     replyLocation.send("***No legendaries :(***");
                                 } else if (legendaryNames.length === 1) {
-                                    const itemApiFill = apiFill(props.itemApi, "", "", legendaryIds[0]);
+                                    const itemApiFill = apiFill(vars.itemApi, "", "", legendaryIds[0]);
                                     request.get({url: itemApiFill}, function optionalCallback(err, httpResponse) {
                                         const itemApiFillRes = JSON.parse(httpResponse.body);
                                         replyLocation.send("***Legendary*** - " + legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillRes.itemSpells[0].spell.description);
                                     });
                                 } else if (legendaryNames.length === 2) {
-                                    const itemApiFill = apiFill(props.itemApi, "", "", legendaryIds[0]);
+                                    const itemApiFill = apiFill(vars.itemApi, "", "", legendaryIds[0]);
                                     request.get({url: itemApiFill}, function optionalCallback(err, httpResponse) {
                                         const itemApiFillRes = JSON.parse(httpResponse.body);
                                         replyLocation.send("***Legendary*** - " + legendaryNames[0] + " (" + legendarySlot[0] + ") - " + itemApiFillRes.itemSpells[0].spell.description);
                                     });
-                                    const itemApiFill2 = apiFill(props.itemApi, "", "", legendaryIds[1]);
+                                    const itemApiFill2 = apiFill(vars.itemApi, "", "", legendaryIds[1]);
                                     request.get({url: itemApiFill2}, function optionalCallback(err, httpResponse) {
                                         const itemApiFillRes2 = JSON.parse(httpResponse.body);
                                         replyLocation.send("***Legendary*** - " + legendaryNames[1] + " (" + legendarySlot[1] + ") - " + itemApiFillRes2.itemSpells[0].spell.description)
@@ -172,7 +172,7 @@ client.on("message", msg =>  {
                             msg.channel.send(msg.content.split(prefix + "pricecheck")[1] + " is not a valid item name");
                         } else {
                             const lookupItemId = httpResponse.body.split("item id=\"")[1].split("\"")[0];
-                            MongoClient.connect(props.mongodburl, function(err, db) {
+                            MongoClient.connect("mongodb://localhost:27017/test", function(err, db) {
                                 if (err) {
                                     msg.channel.send("Something is wrong! Couldn't connect to db");
                                     db.close();
@@ -205,14 +205,14 @@ client.on("message", msg =>  {
             }
 
             if (msg.content.startsWith(prefix + "??loadData")) {
-                MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
+                MongoClient.connect(props.mongodburl, function(err, db) {
                     db.dropDatabase(function(err, result) {
                        msg.channel.send("Dropped old db, rebuilding...");
                     });
                 });
-                request.get({url:props.auctionApi}, function optionalCallback(err, httpResponse) {
+                request.get({url:vars.auctionApi}, function optionalCallback(err, httpResponse) {
                     const auctionJson = JSON.parse(httpResponse.body).files[0].url;
-                    const outputDBConfig = {dbURL: props.mongodburl, collection: "auctions"};
+                    const outputDBConfig = {dbURL: "mongodb://localhost:27017/test", collection: "auctions"};
                     const writableStream = streamToMongoDB(outputDBConfig);
                     request.get({url:auctionJson})
                         .pipe(JSONStream.parse(['auctions', true]))
