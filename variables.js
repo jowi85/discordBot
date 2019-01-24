@@ -1,7 +1,7 @@
 const keys = require('./keys');
 
-const argusGuide = "https://cdn.discordapp.com/attachments/231181456108421121/385163828121436180/677903.jpg";
-exports.argusGuide = argusGuide;
+const wowAudit = "https://wowaudit.com/us/dalaran/forgotten-prophets";
+exports.wowAudit = wowAudit;
 
 const logsURL = "https://www.warcraftlogs.com/reports/";
 exports.logsURL = logsURL;
