@@ -38,7 +38,7 @@ client.on("message", msg =>  {
 
             if (msg.content === prefix + "logs") {
                 request.get({url: vars.logsAPI}, function optionalCallback(err, httpResponse) {
-                    msg.channel.send(vars.logsURL + JSON.parse(httpResponse.body)[JSON.parse(httpResponse.body).length - 1].id);
+                    msg.channel.send(vars.logsURL + JSON.parse(httpResponse.body)[0].id);
                 })
             }
 
