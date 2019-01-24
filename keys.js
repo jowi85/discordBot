@@ -1,4 +1,4 @@
-const BOT_TOKEN = "MjM4MDM4Njk1NzM3ODE5MTM4.DysDIA.9LtRb6K5bLQV3SC3iipzelkQd1M";
+const BOT_TOKEN = "";
 exports.BOT_TOKEN = BOT_TOKEN;
-const LOG_KEY = "bf0e197e9602c5804a5db3340b6add33";
+const LOG_KEY = "";
 exports.LOG_KEY = LOG_KEY;

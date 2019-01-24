@@ -4,24 +4,28 @@ const request = require("request");
 const keys = require('./keys');
 const vars = require('./variables');
 
-client.on('ready', () => {
-    console.log("I am reborn!");
-    client.guilds.array()[0].defaultChannel.send("Battlecruiser operational.");
-});
+const prefix = "!";
+const regExMultipleBangs = /^![^!]*!/g;
+const regExSingleBang = /^![^!]*/g;
+const iCantDoThat = "Stop trying to break me!";
+const thingsICanDo = "Things I can do: \n\n" +
+                      prefix + "logs \n" +
+                      prefix + "spreadsheet \n";
 
 client.login(keys.BOT_TOKEN);
 
+client.on('ready', () => {
+
+    console.log("I am reborn!");
+    client.guilds.array()[0].defaultChannel.send("Battlecruiser operational.");
+
+});
+
 client.on("message", msg =>  {
-    const prefix = "!";
-    const regExMultipleBangs = /^![^!]*!/g;
-    const regExSingleBang = /^![^!]*/g;
-    const iCantDoThat = "Stop trying to break me!";
-    const thingsICanDo = "Things I can do: \n\n" +
-                          prefix + "logs \n" +
-                          prefix + "spreadsheet \n";
 
     if (msg.content.match(regExMultipleBangs)) {
         msg.channel.send(iCantDoThat);
+
     } else if (msg.content.match(regExSingleBang)) {
 
         try {
@@ -50,3 +54,5 @@ client.on("message", msg =>  {
         }
     }
 });
+
+client.on("error", console.error);
