@@ -12,6 +12,5 @@
     "mongodb": "latest",
     "request": "latest",
     "stream-to-mongo-db": "latest"
-
   }
 }

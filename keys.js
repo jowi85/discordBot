@@ -1,6 +1,4 @@
-const BOT_TOKEN = process.env.BOT_TOKEN;
+const BOT_TOKEN = "MjM4MDM4Njk1NzM3ODE5MTM4.DysDIA.9LtRb6K5bLQV3SC3iipzelkQd1M";
 exports.BOT_TOKEN = BOT_TOKEN;
-const API_KEY = process.env.API_KEY;
-exports.API_KEY = API_KEY;
-const LOG_KEY = process.env.LOG_KEY;
+const LOG_KEY = "bf0e197e9602c5804a5db3340b6add33";
 exports.LOG_KEY = LOG_KEY;
