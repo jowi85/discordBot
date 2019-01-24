@@ -1,5 +1,5 @@
 {
-  "name": "wowDiscordBot",
+  "name": "discordbot",
   "version": "0.0.1",
   "description": "Uses discord.js to return WoW APIs to discord channels",
   "main": "bot.js",
