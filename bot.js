@@ -12,12 +12,16 @@ const thingsICanDo = "Things I can do: \n\n" +
                       prefix + "logs \n" +
                       prefix + "spreadsheet \n";
 
+let accessToken;
+
 client.login(keys.BOT_TOKEN);
 
 client.on('ready', () => {
 
     console.log("I am reborn!");
     client.guilds.array()[0].defaultChannel.send("Battlecruiser operational.");
+
+    getAccessToken();
 
 });
 
@@ -46,6 +50,12 @@ client.on("message", msg =>  {
                 })
             }
 
+            if (msg.content === prefix + "tokenprice") {
+                request.get({url:vars.wowTokenEndpoint, headers: {'Authorization': 'Bearer ' + accessToken.access_token}}, function optionalCallback(err, httpResponse) {
+                    msg.channel.send(JSON.parse(httpResponse.body).price);
+                })
+            }
+
         } catch (e) {
 
             console.log(msg.content);
@@ -56,3 +66,23 @@ client.on("message", msg =>  {
 });
 
 client.on("error", console.error);
+
+function getAccessTokenPromise() {
+    return new Promise(function (resolve, reject) {
+        request.post({
+                url:vars.wowOauth,
+                auth: {user:keys.wowClientId, password:keys.wowClientSecret},
+                form: {grant_type: "client_credentials"},
+                json: true}, function (err, res, body) {
+            if (!err) {
+                resolve(body)
+            } else {
+                reject(err)
+            }
+        })
+    })
+}
+
+async function getAccessToken() {
+    accessToken = await getAccessTokenPromise();
+}
