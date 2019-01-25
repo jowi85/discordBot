@@ -20,9 +20,9 @@ client.login(keys.BOT_TOKEN);
 client.on('ready', () => {
 
     console.log("I am reborn!");
-    client.guilds.array()[0].defaultChannel.send("Battlecruiser operational.");
+    // client.guilds.array()[0].defaultChannel.send("Battlecruiser operational.");
 
-    getAccessToken();
+    // getAccessToken();
 
 });
 
@@ -46,15 +46,19 @@ client.on("message", msg =>  {
             }
 
             if (msg.content === prefix + "logs") {
-                request.get({url: vars.logsAPI}, function optionalCallback(err, httpResponse) {
-                    msg.channel.send(vars.logsURL + JSON.parse(httpResponse.body)[0].id);
+                request.get({url: vars.logsAPI, json: true}, function optionalCallback(err, httpResponse) {
+                    msg.channel.send(vars.logsURL + httpResponse.body[0].id);
                 })
             }
 
             if (msg.content === prefix + "tokenprice") {
-                request.get({url:vars.wowTokenEndpoint, headers: {'Authorization': 'Bearer ' + accessToken.access_token}}, function optionalCallback(err, httpResponse) {
-                    msg.channel.send(JSON.parse(httpResponse.body).price);
-                })
+                console.log(returnResult(vars.wowTokenEndpoint))
+                    .then(res => console.log(res));
+
+                // request.get({url:vars.wowTokenEndpoint, headers: {'Authorization': 'Bearer ' + accessToken.access_token}, json: true}, function optionalCallback(err, httpResponse) {
+                //     let rawPrice = parseInt(httpResponse.body.price);
+                //     msg.channel.send(rawPrice/10000);
+                // })
             }
 
         } catch (e) {
@@ -68,8 +72,8 @@ client.on("message", msg =>  {
 
 client.on("error", console.error);
 
-function getAccessTokenPromise() {
-    return new Promise(function (resolve, reject) {
+function getAccessToken() {
+    return new Promise(function(resolve, reject) {
         request.post({
                 url:vars.wowOauth,
                 auth: {user:keys.wowClientId, password:keys.wowClientSecret},
@@ -84,6 +88,20 @@ function getAccessTokenPromise() {
     })
 }
 
-async function getAccessToken() {
-    accessToken = await getAccessTokenPromise();
+async function callEndpoint(endpoint) {
+    getAccessToken().then(function(value) {
+        request.get({
+            url: endpoint,
+            headers: {'Authorization': 'Bearer ' + value.access_token},
+            json: true
+        }, function optionalCallback (err, httpResponse) {
+            return httpResponse.body;
+        })
+    })
+}
+
+async function returnResult(endpoint) {
+    const res = await callEndpoint(endpoint);
+    // console.log(res);
+    return res;
 }
