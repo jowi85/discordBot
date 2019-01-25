@@ -10,7 +10,8 @@ const regExSingleBang = /^![^!]*/g;
 const iCantDoThat = "Stop trying to break me!";
 const thingsICanDo = "Things I can do: \n\n" +
                       prefix + "logs \n" +
-                      prefix + "spreadsheet \n";
+                      prefix + "spreadsheet \n" +
+                      prefix + "tokenprice";
 
 let accessToken;
 
