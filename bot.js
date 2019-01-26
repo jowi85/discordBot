@@ -13,8 +13,6 @@ const thingsICanDo = "Things I can do: \n\n" +
                       prefix + "spreadsheet \n" +
                       prefix + "tokenprice";
 
-let accessToken;
-
 client.login(keys.BOT_TOKEN);
 
 client.on('ready', () => {
