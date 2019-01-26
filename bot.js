@@ -48,7 +48,7 @@ client.on("message", msg =>  {
             }
 
             if (msg.content === prefix + "tokenprice") {
-                callEndpoint(vars.wowTokenEndpoint).then(function(body) {
+                callWowEndpoint(vars.wowTokenEndpoint).then(function(body) {
                     msg.channel.send(parseInt(body.price)/10000);
                 });
             }
@@ -65,33 +65,36 @@ client.on("message", msg =>  {
 client.on("error", console.error);
 
 function getAccessToken() {
+    let options = {url: vars.wowOauth,
+                   auth: {user:keys.wowClientId, password:keys.wowClientSecret},
+                   form: {grant_type: "client_credentials"},
+                   json: true};
     return new Promise(function(resolve, reject) {
-        request.post({
-                url:vars.wowOauth,
-                auth: {user:keys.wowClientId, password:keys.wowClientSecret},
-                form: {grant_type: "client_credentials"},
-                json: true}, function (err, res, body) {
-            if (!err) {
-                resolve(body)
-            } else {
-                reject(err)
-            }
+        request.post(options, function(err, res, body) {
+            if (!err) {resolve(body)}
+            else {reject(err)}
         })
     })
 }
 
 async function callEndpoint(endpoint) {
-    const token = await getAccessToken();
+    let options = {url: endpoint, json: true};
     return new Promise(function(resolve, reject) {
-        request.get({
-                url: endpoint,
-                headers: {'Authorization': 'Bearer ' + token.access_token},
-                json: true}, function (err, res, body) {
-            if (!err) {
-                resolve(body)
-            } else {
-                reject(err)
-            }
+        request.get(options, function(err, res, body) {
+            if (!err) {resolve(body)}
+            else {reject(err)}
+        })
+    })
+}
+
+async function callWowEndpoint(endpoint) {
+    let token = await getAccessToken(),
+        headers = {'Authorization': 'Bearer ' + token.access_token},
+        options = {url: endpoint, headers: headers, json: true};
+    return new Promise(function(resolve, reject) {
+        request.get(options, function(err, res, body) {
+            if (!err) {resolve(body)}
+            else {reject(err)}
         })
     })
 }
