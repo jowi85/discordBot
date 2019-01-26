@@ -20,9 +20,7 @@ client.login(keys.BOT_TOKEN);
 client.on('ready', () => {
 
     console.log("I am reborn!");
-    // client.guilds.array()[0].defaultChannel.send("Battlecruiser operational.");
-
-    // getAccessToken();
+    client.guilds.array()[0].defaultChannel.send("Battlecruiser operational.");
 
 });
 
@@ -46,19 +44,15 @@ client.on("message", msg =>  {
             }
 
             if (msg.content === prefix + "logs") {
-                request.get({url: vars.logsAPI, json: true}, function optionalCallback(err, httpResponse) {
-                    msg.channel.send(vars.logsURL + httpResponse.body[0].id);
-                })
+                callEndpoint(vars.logsAPI).then(function(body) {
+                    msg.channel.send(vars.logsURL + body[0].id)
+                });
             }
 
             if (msg.content === prefix + "tokenprice") {
-                console.log(returnResult(vars.wowTokenEndpoint))
-                    .then(res => console.log(res));
-
-                // request.get({url:vars.wowTokenEndpoint, headers: {'Authorization': 'Bearer ' + accessToken.access_token}, json: true}, function optionalCallback(err, httpResponse) {
-                //     let rawPrice = parseInt(httpResponse.body.price);
-                //     msg.channel.send(rawPrice/10000);
-                // })
+                callEndpoint(vars.wowTokenEndpoint).then(function(body) {
+                    msg.channel.send(parseInt(body.price)/10000);
+                });
             }
 
         } catch (e) {
@@ -89,19 +83,17 @@ function getAccessToken() {
 }
 
 async function callEndpoint(endpoint) {
-    getAccessToken().then(function(value) {
+    const token = await getAccessToken();
+    return new Promise(function(resolve, reject) {
         request.get({
-            url: endpoint,
-            headers: {'Authorization': 'Bearer ' + value.access_token},
-            json: true
-        }, function optionalCallback (err, httpResponse) {
-            return httpResponse.body;
+                url: endpoint,
+                headers: {'Authorization': 'Bearer ' + token.access_token},
+                json: true}, function (err, res, body) {
+            if (!err) {
+                resolve(body)
+            } else {
+                reject(err)
+            }
         })
     })
-}
-
-async function returnResult(endpoint) {
-    const res = await callEndpoint(endpoint);
-    // console.log(res);
-    return res;
 }
