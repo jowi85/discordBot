@@ -22,7 +22,7 @@ client.on('ready', () => {
 
 });
 
-client.on("message", msg =>  {
+client.on("message", msg => {
 
     if (msg.content.match(regExMultipleBangs)) {
         msg.channel.send(iCantDoThat);
@@ -51,6 +51,20 @@ client.on("message", msg =>  {
                 callWowEndpoint(vars.wowTokenEndpoint).then(function(body) {
                     msg.channel.send(parseInt(body.price)/10000);
                 });
+            }
+
+            if (msg.content.startsWith(prefix + "raiderio")) {
+                    let msgSplit = msg.content.split(" "),
+                        realm = msgSplit[1],
+                        toon = msgSplit[2];
+                    if (msgSplit.length !== 3) {}
+                    else {callEndpoint(vars.raiderioScore.replace("vrealm", realm).replace("vname", toon)).then(function(body) {
+                        if (body.statusCode && body.statusCode === 400) {
+                            msg.channel.send(body.message)
+                        } else {
+                            msg.channel.send(body.mythic_plus_scores.all);
+                        }});
+                    }
             }
 
         } catch (e) {

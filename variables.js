@@ -12,3 +12,6 @@ const wowOauth = "https://us.battle.net/oauth/token";
 exports.wowOauth = wowOauth;
 const wowTokenEndpoint = "https://us.api.blizzard.com/data/wow/token/?namespace=dynamic-us";
 exports.wowTokenEndpoint = wowTokenEndpoint;
+
+const raiderioScore = "https://raider.io/api/v1/characters/profile?region=us&realm=vrealm&name=vname&fields=mythic_plus_scores";
+exports.raiderioScore = raiderioScore;
