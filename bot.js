@@ -60,11 +60,8 @@ client.on("message", msg => {
                         toon = msgSplit[2];
                     if (msgSplit.length !== 3) {}
                     else {callEndpoint(vars.raiderioScore.replace("vrealm", realm).replace("vname", toon)).then(function(body) {
-                        if (body.statusCode && body.statusCode === 400) {
-                            msg.channel.send(body.message)
-                        } else {
-                            msg.channel.send(body.mythic_plus_scores.all);
-                        }});
+                        if (body.statusCode && body.statusCode === 400) {msg.channel.send(body.message)}
+                        else {msg.channel.send(body.mythic_plus_scores.all)}});
                     }
             }
 
