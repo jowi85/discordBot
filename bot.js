@@ -11,7 +11,8 @@ const iCantDoThat = "Stop trying to break me!";
 const thingsICanDo = "Things I can do: \n\n" +
                       prefix + "logs \n" +
                       prefix + "spreadsheet \n" +
-                      prefix + "tokenprice";
+                      prefix + "tokenprice \n" +
+                      prefix + "raiderio {realm} {name}";
 
 client.login(keys.BOT_TOKEN);
 
