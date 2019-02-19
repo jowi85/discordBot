@@ -19,7 +19,7 @@ client.login(keys.BOT_TOKEN);
 client.on('ready', () => {
 
     console.log("I am reborn!");
-    client.guilds.array()[0].defaultChannel.send("Battlecruiser operational.");
+    client.guilds.array()[0].defaultChannel.send("Ishnu'alah");
 
 });
 
@@ -48,10 +48,14 @@ client.on("message", msg => {
                 });
             }
 
-            if (msg.content === prefix + "tokenprice") {
-                callWowEndpoint(vars.wowTokenEndpoint).then(function(body) {
-                    msg.channel.send(parseInt(body.price)/10000);
-                });
+            if (msg.content === prefix + "twitch") {
+                msg.channel.send(
+                    getTwitchLink("ryzer1393") +
+                    getTwitchLink("eidle_w") +
+                    getTwitchLink("ryee85") +
+                    getTwitchLink("horizon_92") +
+                    getTwitchLink("coldmedinagaming")
+                )
             }
 
             if (msg.content.startsWith(prefix + "raiderio")) {
@@ -75,6 +79,10 @@ client.on("message", msg => {
 });
 
 client.on("error", console.error);
+
+function getTwitchLink(username) {
+    return "https://www.twitch.tv/" + username + "\n";
+}
 
 function getAccessToken() {
     let options = {url: vars.wowOauth,
