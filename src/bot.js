@@ -12,7 +12,9 @@ const thingsICanDo = "Things I can do: \n\n" +
                       prefix + "logs \n" +
                       prefix + "spreadsheet \n" +
                       prefix + "tokenprice \n" +
-                      prefix + "raiderio {realm} {name}";
+                      prefix + "raiderio {realm, default dalaran} {name}";
+
+let realm, toon, msgSplit;
 
 client.login(keys.BOT_TOKEN);
 
@@ -59,14 +61,19 @@ client.on("message", msg => {
             }
 
             if (msg.content.startsWith(prefix + "raiderio")) {
-                    let msgSplit = msg.content.split(" "),
-                        realm = msgSplit[1],
-                        toon = msgSplit[2];
-                    if (msgSplit.length !== 3) {}
-                    else {callEndpoint(vars.raiderioScore.replace("vrealm", realm).replace("vname", toon)).then(function(body) {
+                msgSplit = msg.content.split(" ");
+                if (msgSplit.length === 2) {
+                    toon = msgSplit[1];
+                    callEndpoint(vars.raiderioScore.replace("vrealm", "dalaran").replace("vname", toon)).then(function(body) {
                         if (body.statusCode && body.statusCode === 400) {msg.channel.send(body.message)}
-                        else {msg.channel.send(body.mythic_plus_scores.all)}});
-                    }
+                        else {msg.channel.send(body.mythic_plus_scores.all)}})}
+                else if (msgSplit.length === 3) {
+                    realm = msgSplit[1];
+                    toon = msgSplit[2];
+                    callEndpoint(vars.raiderioScore.replace("vrealm", realm).replace("vname", toon)).then(function(body) {
+                        if (body.statusCode && body.statusCode === 400) {msg.channel.send(body.message)}
+                        else {msg.channel.send(body.mythic_plus_scores.all)}})}
+                else {}
             }
 
         } catch (e) {
