@@ -1,127 +1,41 @@
 const Discord = require("discord.js");
 const client = new Discord.Client();
-const request = require("request");
+const fs = require('fs');
+const path = require('path');
+
+const {prefix} = require('./config.json');
 const keys = require('./keys');
-const vars = require('./variables');
 
-const prefix = "!";
-const regExMultipleBangs = /^![^!]*!/g;
-const regExSingleBang = /^![^!]*/g;
-const iCantDoThat = "Stop trying to break me!";
-const thingsICanDo = "Things I can do: \n\n" +
-                      prefix + "logs \n" +
-                      prefix + "spreadsheet \n" +
-                      prefix + "tokenprice \n" +
-                      prefix + "raiderio {realm, default dalaran} {name}";
+client.commands = new Discord.Collection();
+const commandFiles = fs.readdirSync(path.resolve(__dirname, "./commands")).filter(file => file.endsWith('.js'));
 
-let realm, toon, msgSplit;
+for (const file of commandFiles) {
+    const command = require(`./commands/${file}`);
+    client.commands.set(command.name, command);
+}
 
-client.login(keys.BOT_TOKEN);
-
-client.on('ready', () => {
+client.once('ready', () => {
 
     console.log("I am reborn!");
     client.guilds.array()[0].defaultChannel.send("Ishnu'alah");
 
 });
 
-client.on("message", msg => {
+client.on('message', msg => {
+    if (!msg.content.startsWith(prefix) || msg.author.bot) return;
 
-    if (msg.content.match(regExMultipleBangs)) {
-        msg.channel.send(iCantDoThat);
+    const args = msg.content.slice(prefix.length).split(/ +/);
+    const command = args.shift().toLowerCase();
 
-    } else if (msg.content.match(regExSingleBang)) {
+    if (!client.commands.has(command)) return;
 
-        try {
-
-            if (!msg.content.startsWith(prefix)) return;
-
-            if (msg.content.startsWith(prefix + "help")) {
-                msg.channel.send(thingsICanDo);
-            }
-
-            if (msg.content.startsWith(prefix + "spreadsheet")) {
-                msg.channel.send(vars.wowAudit)
-            }
-
-            if (msg.content === prefix + "logs") {
-                callEndpoint(vars.logsAPI).then(function(body) {
-                    msg.channel.send(vars.logsURL + body[0].id)
-                });
-            }
-
-            if (msg.content === prefix + "twitch") {
-                msg.channel.send(
-                    getTwitchLink("ryzer1393") +
-                    getTwitchLink("eidle_w") +
-                    getTwitchLink("ryee85") +
-                    getTwitchLink("horizon_92") +
-                    getTwitchLink("coldmedinagaming")
-                )
-            }
-
-            if (msg.content.startsWith(prefix + "raiderio")) {
-                msgSplit = msg.content.split(" ");
-                if (msgSplit.length === 2) {
-                    toon = msgSplit[1];
-                    callEndpoint(vars.raiderioScore.replace("vrealm", "dalaran").replace("vname", toon)).then(function(body) {
-                        if (body.statusCode && body.statusCode === 400) {msg.channel.send(body.message)}
-                        else {msg.channel.send(body.mythic_plus_scores.all)}})}
-                else if (msgSplit.length === 3) {
-                    realm = msgSplit[1];
-                    toon = msgSplit[2];
-                    callEndpoint(vars.raiderioScore.replace("vrealm", realm).replace("vname", toon)).then(function(body) {
-                        if (body.statusCode && body.statusCode === 400) {msg.channel.send(body.message)}
-                        else {msg.channel.send(body.mythic_plus_scores.all)}})}
-                else {}
-            }
-
-        } catch (e) {
-
-            console.log(msg.content);
-            console.log(e);
-
-        }
+    try {
+        client.commands.get(command).execute(msg, args);
+    } catch (error) {
+        console.error(error);
+        message.reply('there was an error trying to execute that command!');
     }
 });
 
-client.on("error", console.error);
+client.login(keys.BOT_TOKEN);
 
-function getTwitchLink(username) {
-    return "https://www.twitch.tv/" + username + "\n";
-}
-
-function getAccessToken() {
-    let options = {url: vars.wowOauth,
-                   auth: {user:keys.wowClientId, password:keys.wowClientSecret},
-                   form: {grant_type: "client_credentials"},
-                   json: true};
-    return new Promise(function(resolve, reject) {
-        request.post(options, function(err, res, body) {
-            if (!err) {resolve(body)}
-            else {reject(err)}
-        })
-    })
-}
-
-async function callEndpoint(endpoint) {
-    let options = {url: endpoint, json: true};
-    return new Promise(function(resolve, reject) {
-        request.get(options, function(err, res, body) {
-            if (!err) {resolve(body)}
-            else {reject(err)}
-        })
-    })
-}
-
-async function callWowEndpoint(endpoint) {
-    let token = await getAccessToken(),
-        headers = {'Authorization': 'Bearer ' + token.access_token},
-        options = {url: endpoint, headers: headers, json: true};
-    return new Promise(function(resolve, reject) {
-        request.get(options, function(err, res, body) {
-            if (!err) {resolve(body)}
-            else {reject(err)}
-        })
-    })
-}
