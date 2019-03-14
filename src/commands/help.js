@@ -8,7 +8,9 @@ const thingsICanDo = "Things I can do: \n\n" +
 module.exports = {
     name: 'help',
     description: 'help',
-    execute(msg) {
-        msg.channel.send(thingsICanDo);
+    execute(msg, args) {
+        if (args.length === 0) {
+            msg.channel.send(thingsICanDo);
+        }
     },
 };
