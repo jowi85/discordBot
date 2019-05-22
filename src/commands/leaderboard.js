@@ -18,14 +18,12 @@ module.exports = {
     name: 'leaderboard',
     description: 'leaderboard',
     async execute(msg, args) {
-        if (args.length === 1) {
+        if (args.length === 1 && (args[0] === '3' || args[0] === '5')) {
             for (let i = 0; i < members.length; i++) {
                 let body = await apiCalls.callEndpoint(raiderioScore.replace("vname", members[i].name));
                 members[i].score = body.mythic_plus_scores_by_season[0].scores.all;
             }
             members.sort(compare);
-        }
-        if (args[0] === '3' || args[0] === '5') {
             for (let i = 0; i < parseInt(args[0]); i++) {
                 msg.channel.send(members[i].name + ": " + members[i].score);
             }
