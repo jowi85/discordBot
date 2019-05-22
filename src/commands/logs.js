@@ -6,11 +6,10 @@ const apiCalls = require('../helpers/apiCalls');
 module.exports = {
     name: 'logs',
     description: 'logs',
-    execute(msg, args) {
+    async execute(msg, args) {
         if (args.length === 0) {
-            apiCalls.callEndpoint(logsAPI).then(function (body) {
-                msg.channel.send(logsURL + body[0].id)
-            });
+            let body = await apiCalls.callEndpoint(logsAPI);
+            msg.channel.send(logsURL + body[0].id)
         }
     },
 };

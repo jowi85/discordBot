@@ -15,7 +15,7 @@ exports.getAccessToken = function() {
     })
 };
 
-exports.callEndpoint = async function(endpoint) {
+exports.callEndpoint = function(endpoint) {
     let options = {url: endpoint, json: true};
     return new Promise(function(resolve, reject) {
         request.get(options, function(err, res, body) {
