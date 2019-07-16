@@ -9,4 +9,4 @@ before_script:
 install:
   - docker build . -t docker.io/cronym/fp-discord-bot:${TRAVIS_PULL_REQUEST}
 
-script: ./script/docker-tag.sh
+script: ./scripts/docker-tag.sh
