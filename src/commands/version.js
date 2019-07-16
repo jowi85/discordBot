@@ -1,4 +1,4 @@
-const BOT_VERSION = process.env.BOT_VERSION || "";
+const BOT_VERSION = process.env.BOT_VERSION || "Couldn't get version";
 
 module.exports = {
     name: 'version',
