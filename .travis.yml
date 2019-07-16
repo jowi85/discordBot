@@ -3,10 +3,7 @@ language: node_js
 services:
   - docker
 
-before_script:
-  - version=$TRAVIS_PULL_REQUEST
-
 install:
-  - docker build . -t docker.io/cronym/fp-discord-bot:${TRAVIS_PULL_REQUEST}
+  - docker build . -t docker.io/cronym/fp-discord-bot:${TRAVIS_BUILD_NUMBER}
 
 script: ./scripts/docker-tag.sh
