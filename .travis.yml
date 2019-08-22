@@ -1,3 +1,4 @@
+---
 language: node_js
 
 services:
@@ -5,5 +6,13 @@ services:
 
 install:
   - docker build . -t docker.io/cronym/fp-discord-bot:${TRAVIS_BUILD_NUMBER}
+
+jobs:
+  include:
+    - stage: test
+      script: ./scripts/tests.sh
+    - stage: deploy
+      script: ./scripts/deploy.sh
+      if: branch = master AND tag IS present
 
 script: ./scripts/docker-tag.sh
