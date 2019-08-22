@@ -13,6 +13,7 @@ jobs:
       script: ./scripts/tests.sh
     - stage: deploy
       script: ./scripts/deploy.sh
-      if: branch = master AND tag IS present
+      # if: branch = master AND tag IS present
+      if: branch = master
 
 script: ./scripts/docker-tag.sh
