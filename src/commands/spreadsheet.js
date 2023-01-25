@@ -1,11 +1,10 @@
-const wowAudit = "https://wowaudit.com/us/dalaran/forgotten-prophets";
+const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
-    name: 'spreadsheet',
-    description: 'spreadsheet',
-    execute(msg, args) {
-        if (args.length === 0) {
-            msg.channel.send(wowAudit);
-        }
+    data: new SlashCommandBuilder()
+        .setName('spreadsheet')
+        .setDescription('Replies with a link to FP\'s wowaudit spreadsheet!'),
+    async execute(interaction) {
+        await interaction.reply('https://wowaudit.com/sheet/us/dalaran/forgotten-prophets/main');
     },
 };

@@ -1,15 +1,15 @@
-const keys = require('../keys');
-const logsURL = "https://www.warcraftlogs.com/reports/";
-const logsAPI = "https://www.warcraftlogs.com:443/v1/reports/guild/Forgotten%20Prophets/Dalaran/US?api_key="+keys.LOG_KEY;
+const {SlashCommandBuilder} = require("discord.js");
 const apiCalls = require('../helpers/apiCalls');
+const { warcraftlogsClientId, warcraftlogsClientSecret } = require('../config.json');
+const warcraftlogsOauth = "https://www.warcraftlogs.com/oauth/token";
+const warcraftlogsEndpoint = "https://www.warcraftlogs.com/api/v2/client";
 
 module.exports = {
-    name: 'logs',
-    description: 'logs',
-    async execute(msg, args) {
-        if (args.length === 0) {
-            let body = await apiCalls.callEndpoint(logsAPI);
-            msg.channel.send(logsURL + body[0].id)
-        }
+    data: new SlashCommandBuilder()
+        .setName('logs')
+        .setDescription('Replies with most recent WarcraftLogs link!'),
+    async execute(interaction) {
+        let body = await apiCalls.callEndpointWithToken(warcraftlogsEndpoint, warcraftlogsOauth, warcraftlogsClientId, warcraftlogsClientSecret)
+        await interaction.reply("https://www.warcraftlogs.com/reports/" + body.data.reportData.reports.data[0].code);
     },
 };

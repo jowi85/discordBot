@@ -1,41 +1,37 @@
-const Discord = require("discord.js");
-const client = new Discord.Client();
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
+const { Client, Collection, Events, GatewayIntentBits, Guild} = require('discord.js');
+const { token } = require('./config.json');
 
-const {prefix} = require('./config.json');
-const keys = require('./keys');
+const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
-client.commands = new Discord.Collection();
-const commandFiles = fs.readdirSync(path.resolve(__dirname, "./commands")).filter(file => file.endsWith('.js'));
+client.commands = new Collection();
+const commandsPath = path.join(__dirname, 'commands');
+const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
-    const command = require(`./commands/${file}`);
-    client.commands.set(command.name, command);
+    const filePath = path.join(commandsPath, file);
+    const command = require(filePath);
+    client.commands.set(command.data.name, command);
 }
 
-client.once('ready', () => {
-
-    console.log("I am reborn!");
-    client.guilds.array()[0].defaultChannel.send("Ishnu'alah");
-
+client.once(Events.ClientReady, () => {
+    console.log("FP Bot online!");
 });
 
-client.on('message', msg => {
-    if (!msg.content.startsWith(prefix) || msg.author.bot) return;
+client.on(Events.InteractionCreate, async interaction => {
+    if (!interaction.isChatInputCommand()) return;
 
-    const args = msg.content.slice(prefix.length).split(/ +/);
-    const command = args.shift().toLowerCase();
+    const command = client.commands.get(interaction.commandName);
 
-    if (!client.commands.has(command)) return;
+    if (!command) return;
 
     try {
-        client.commands.get(command).execute(msg, args);
+        await command.execute(interaction);
     } catch (error) {
         console.error(error);
-        message.reply('there was an error trying to execute that command!');
+        await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
     }
 });
 
-client.login(keys.BOT_TOKEN);
-
+client.login(token);
