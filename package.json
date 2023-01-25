@@ -1,16 +1,13 @@
 {
   "name": "discordbot",
   "version": "0.0.2",
-  "description": "Uses discord.js to return WoW APIs to discord channels",
+  "description": "Fun Discord.JS project for FP Discord",
   "main": "src/bot.js",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
     "discord.js": "latest",
-    "JSONStream": "latest",
-    "mongodb": "latest",
-    "request": "latest",
-    "stream-to-mongo-db": "latest"
+    "request": "latest"
   }
 }

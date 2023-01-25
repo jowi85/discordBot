@@ -1,4 +1,4 @@
-const {SlashCommandBuilder} = require("discord.js");
+const { SlashCommandBuilder } = require("discord.js");
 const apiCalls = require('../helpers/apiCalls');
 const { warcraftlogsClientId, warcraftlogsClientSecret } = require('../config.json');
 const warcraftlogsOauth = "https://www.warcraftlogs.com/oauth/token";
